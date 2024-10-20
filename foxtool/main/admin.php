@@ -12,22 +12,23 @@ function foxtool_options_page() {
 	  <div class="ft-box">
 	  
 		<div class="ft-menu">
-			<div class="ft-logo"><?php foxtool_logo(); ?></div>
+			<div class="ft-logo ft-logoquay">
+			<a class="ft-logoquaya" href="https://foxplugin.com" target="_blank">
+			<span><?php foxtool_logo(); ?></span>
+			</a>
+			</div>
 			<button class="sotab sotab-select" onclick="fttab(event, 'tab1')"><i class="fa-regular fa-gauge-max"></i> <?php _e('OPTIMIZE', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab2')"><i class="fa-regular fa-shield-halved"></i> <?php _e('SECURITY', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab3')"><i class="fa-regular fa-toolbox"></i> <?php _e('TOOL', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab4')"><i class="fa-regular fa-desktop"></i> <?php _e('DISPLAY', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab5')"><i class="fa-regular fa-image"></i> <?php _e('MEDIA', 'foxtool'); ?></button>
-			<button class="sotab" onclick="fttab(event, 'tab6')"><i class="fa-regular fa-thumbtack"></i> <?php _e('POST', 'foxtool'); ?></button>
+			<button class="sotab" onclick="fttab(event, 'tab6')"><i class="fa-regular fa-note-sticky"></i> <?php _e('CONTENT', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab7')"><i class="fa-regular fa-envelope"></i> <?php _e('MAIL', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab8')"><i class="fa-regular fa-cart-shopping"></i> <?php _e('WOO', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab9')"><i class="fa-regular fa-user"></i> <?php _e('USER', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab10')"><i class="fa-brands fa-wordpress-simple"></i> <?php _e('CUSTOM', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab11')"><i class="fa-brands fa-google"></i> <?php _e('GOOGLE', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab12')"><i class="fa-regular fa-message-lines"></i> <?php _e('CHAT', 'foxtool'); ?></button>
-			<button class="sotab" onclick="fttab(event, 'tab13')"><i class="fa-regular fa-brackets-square"></i> <?php _e('SHORTCODE', 'foxtool'); ?></button>
-			<button class="sotab" onclick="fttab(event, 'tab14')"><i class="fa-regular fa-bell"></i> <?php _e('NOTIFY', 'foxtool'); ?></button>
-			<button class="sotab" onclick="fttab(event, 'tab15')"><i class="fa-regular fa-rectangle-ad"></i> <?php _e('ADS', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab-ft1')"><i class="fa-regular fa-gear-complex"></i> <?php _e('SETTING', 'foxtool'); ?></button>
 		</div>
 
@@ -85,18 +86,6 @@ function foxtool_options_page() {
 			<div class="sotab-box ftbox" id="tab12" style="display:none">
 				<?php include( FOXTOOL_DIR . 'main/page/12chat.php'); ?>
 			</div>
-			<!-- Shortcode -->
-			<div class="sotab-box ftbox" id="tab13" style="display:none">
-				<?php include( FOXTOOL_DIR . 'main/page/13shortcode.php'); ?>
-			</div>
-			<!-- thong bao -->
-			<div class="sotab-box ftbox" id="tab14" style="display:none">
-				<?php include( FOXTOOL_DIR . 'main/page/14notify.php'); ?>
-			</div>
-			<!-- quang cao -->
-			<div class="sotab-box ftbox" id="tab15" style="display:none">
-				<?php include( FOXTOOL_DIR . 'main/page/15ads.php'); ?>
-			</div>
 			<!-- trang cai dat -->
 			<div class="sotab-box ftbox" id="tab-ft1" style="display:none">
 				<?php include( FOXTOOL_DIR . 'main/page/ft-setting.php'); ?> 
@@ -149,4 +138,9 @@ function foxtool_tool_register_settings() {
 	register_setting('foxtool_settings_group', 'foxtool_settings');
 }
 add_action('admin_init', 'foxtool_tool_register_settings');
+// clear cache
+function foxtool_settings_cache($old_value, $value) {
+    wp_cache_delete('foxtool_settings', 'options');
+}
+add_action('update_option_foxtool_settings', 'foxtool_settings_cache', 10, 2);
 

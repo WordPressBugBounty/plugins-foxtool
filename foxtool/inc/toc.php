@@ -1,6 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 global $foxtool_toc_options;
+if (isset($foxtool_toc_options['toc1'])){
 # add css js chat web
 function foxtool_enqueue_toc(){
 	global $foxtool_toc_options;
@@ -34,6 +35,8 @@ function foxtool_toc_fun(){
 	$title = !empty($foxtool_toc_options['tit-c1']) ? $foxtool_toc_options['tit-c1'] : __('Table of Contents', 'foxtool');
 	$show = !empty($foxtool_toc_options['tit-c3']) ? 'ft-toc-main-open' : NULL;
 	$onnumber = !isset($foxtool_toc_options['tit-c4']) ? 'data-on="on"' : NULL;
+	$hiddenlist = isset($foxtool_toc_options['tit-c5']) ? 'style="display:none"' : NULL;
+	$hiddenicon = isset($foxtool_toc_options['tit-c6']) ? 'data-ico="off"' : NULL;
 	$dtocicon = '<svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2"><path d="M88.96,62.672l-38.96,19.477l-38.96,-19.477l-0,-44.821l38.967,19.494l38.953,-19.494l0,44.821Zm-70.163,-32.02l-0.081,28.051l31.231,13.893l26.676,-12.541l-57.826,-29.403Zm31.21,6.693l38.83,19.327l-31.632,-22.929l-7.198,3.602Z"/></svg>';
 	if (isset($foxtool_toc_options['main-ico'])) {
 		$tocico_option = $foxtool_toc_options['main-ico'];
@@ -62,14 +65,14 @@ function foxtool_toc_fun(){
 	
 	$iconcl = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1024 1024"><path fill="currentColor" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504L738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512L828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496L285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512L195.2 285.696a64 64 0 0 1 0-90.496"/></svg>';
 	$iconhi = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1024 1024"><path fill="currentColor" d="M104.704 685.248a64 64 0 0 0 90.496 0l316.8-316.8l316.8 316.8a64 64 0 0 0 90.496-90.496L557.248 232.704a64 64 0 0 0-90.496 0L104.704 594.752a64 64 0 0 0 0 90.496"/></svg>';
-	$toc_html = '<div class="ft-toc-placeholder"><div class="ft-toc-main '. $show .' ">
+	$toc_html = '<div class="ft-toc-placeholder" data-h="'. $tagh .'" '. $onnumber .' '. $hiddenicon .'><div class="ft-toc-main '. $show .' ">
 		<div class="ft-toc-close" onclick="tocclose();" style="display:none">'. $tocicoset .'</div>
 		<div class="ft-toc-tit"><span class="ft-toc-tit-sp"><span class="ft-toc-tit-svg">'. $tocicoset .'</span><span class="ft-toc-close2" onclick="tocclose();">'. $iconcl .'</span>'. $title .'</span><span class="ft-toc-tit-hi">'. $iconhi .'</span></div>
 		<div class="ft-toc-scrol">
-		<ol id="ft-toc-list">
+		<ol id="ft-toc-list" '. $hiddenlist .'>
 		</ol>
 		</div>
-	</div></div><span id="ft-toc-neo" data-h="'. $tagh .'" '. $onnumber .'></span>';
+	</div></div>';
 	return $toc_html;	
 }
 # add content
@@ -225,3 +228,4 @@ function foxtool_add_toc_rankmathseo($toc_plugins) {
     return $toc_plugins;
 }
 add_filter('rank_math/researches/toc_plugins', 'foxtool_add_toc_rankmathseo');
+}

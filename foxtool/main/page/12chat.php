@@ -16,11 +16,45 @@ global $foxtool_options; ?>
 	<span class="slider"></span></label>
 	<label class="ft-label-right"><?php _e('Enable chat button', 'foxtool'); ?></label>
 	</p>
-	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Visit this page to get the SVG icon:', 'foxtool'); ?> <b><a target="_blank" href="https://lineicons.com/free-icons">lineicons.com</a> [Copy SVG]</b>
+	<p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[chat-nut-js]" value="1" <?php if ( isset($foxtool_options['chat-nut-js']) && 1 == $foxtool_options['chat-nut-js'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Hide chat button when scrolling down', 'foxtool'); ?></label>
+	</p>
+	<h4><?php _e('Display options', 'foxtool'); ?></h4>
+	<div id="ft-imgstyle3" class="ft-imgstyle ft-imgstyle6">
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/1.png'); ?>" data-value="Default" class="<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == 'Default') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/2.png'); ?>" data-value="Total" class="<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == 'Total') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/3.png'); ?>" data-value="Effective" class="<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == 'Effective') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/4.png'); ?>" data-value="Leaves" class="<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == 'Leaves') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/5.png'); ?>" data-value="Floating" class="<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == 'Floating') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/6.png'); ?>" data-value="Tap" class="<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == 'Tap') echo 'selected'; ?>" />
+	</div>
+	<input type="hidden" name="foxtool_settings[chat-nut-skin]" id="chat-nut-skin" value="<?php if(!empty($foxtool_options['chat-nut-skin'])){echo sanitize_text_field($foxtool_options['chat-nut-skin']);} else {echo sanitize_text_field('Default');} ?>" />
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var imgStyles = document.querySelectorAll('#ft-imgstyle3 img');
+			imgStyles.forEach(function(img) {
+				img.addEventListener('click', function() {
+					var selectedStyle = this.getAttribute('data-value');
+					document.getElementById('chat-nut-skin').value = selectedStyle;
+					imgStyles.forEach(function(img) {
+						img.classList.remove('selected');
+					});
+					this.classList.add('selected');
+				});
+			});
+		});
+	</script>
+	<h4><?php _e('Configure buttons', 'foxtool'); ?></h4>
+	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Visit this page to get the SVG icon:', 'foxtool'); ?> <b><a target="_blank" href="https://lineicons.com/free-icons">lineicons.com</a> [Copy SVG]</b><br>
+	<b>Custom, Maps:</b> <?php _e('Enter link', 'foxtool'); ?><br>
+	<b>Phone, SMS, Messenger, Telegram, Zalo, Whatsapp, Viber, Skype, Tiktok, Mail:</b> <?php _e('Enter ID', 'foxtool'); ?>
 	</p>
 	<div id="sortable-list">
 	<div data-id="1" class="ui-state-default ft-button-grid">
-	<?php $styles = array('None', 'Custom', 'Phone', 'SMS', 'Messenger', 'Telegram', 'Zalo', 'Whatsapp', 'Viber', 'Skype', 'Mail', 'Maps'); ?>
+	<?php $styles = array('Custom', 'Phone', 'SMS', 'Messenger', 'Telegram', 'Zalo', 'Whatsapp', 'Viber', 'Skype', 'Tiktok', 'Mail', 'Maps'); ?>
 	<select name="foxtool_settings[chat-nut11]"> 
 	<?php foreach($styles as $style) { ?> 
 	<?php if(isset($foxtool_options['chat-nut11']) && $foxtool_options['chat-nut11'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
@@ -66,7 +100,6 @@ global $foxtool_options; ?>
 			var count = $('#sortable-list .ui-state-default:last').data('id') + 1;
 			var newDiv = $('<div data-id="' + count + '" class="ui-state-default ft-button-grid">' +
 				'<select name="foxtool_settings[chat-nut1' + count + ']">' +
-				'<option value="None">None</option>' +
 				'<option value="Custom">Custom</option>' +
 				'<option value="Phone">Phone</option>' +
 				'<option value="SMS">SMS</option>' +
@@ -76,6 +109,7 @@ global $foxtool_options; ?>
 				'<option value="Whatsapp">Whatsapp</option>' +
 				'<option value="Viber">Viber</option>' +
 				'<option value="Skype">Skype</option>' +
+				'<option value="Skype">Tiktok</option>' +
 				'<option value="Mail">Mail</option>' +
 				'<option value="Maps">Maps</option>' +
 				'</select>' +
@@ -108,32 +142,15 @@ global $foxtool_options; ?>
 				var selectName = 'foxtool_settings[chat-nut1' + newIndex + ']';
 				var inputName2Name = 'foxtool_settings[chat-nut2' + newIndex + ']';
 				var inputName3Name = 'foxtool_settings[chat-nut3' + newIndex + ']';
-				var inputName4Name = 'foxtool_settings[chat-nut4' + newIndex + ']';
+				var textareaName = 'foxtool_settings[chat-nut4' + newIndex + ']';
 				$(this).find("select").attr("name", selectName);
 				$(this).find('input[name^="foxtool_settings[chat-nut2"]').attr("name", inputName2Name);
 				$(this).find('input[name^="foxtool_settings[chat-nut3"]').attr("name", inputName3Name);
-				$(this).find('input[name^="foxtool_settings[chat-nut4"]').attr("name", inputName4Name);
+				$(this).find('textarea[name^="foxtool_settings[chat-nut4"]').attr("name", textareaName);
 			});
 		}
 	});
 	</script>
-	<h4><?php _e('Display options', 'foxtool'); ?></h4>
-	<p>
-	<?php $styles = array('Default', 'Total', 'Effective', 'Leaves', 'Floating', 'Tap'); ?>
-	<select style="width:120px;" name="foxtool_settings[chat-nut-skin]"> 
-	<?php foreach($styles as $style) { ?> 
-	<?php if(isset($foxtool_options['chat-nut-skin']) && $foxtool_options['chat-nut-skin'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
-	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
-	<?php } ?> 
-	</select>
-	<label class="ft-right-text"><?php _e('Select display type', 'foxtool'); ?></label>
-	</p>
-	<p>
-	<label class="nut-switch">
-	<input type="checkbox" name="foxtool_settings[chat-nut-js]" value="1" <?php if ( isset($foxtool_options['chat-nut-js']) && 1 == $foxtool_options['chat-nut-js'] ) echo 'checked="checked"'; ?> />
-	<span class="slider"></span></label>
-	<label class="ft-label-right"><?php _e('Hide chat button when scrolling down', 'foxtool'); ?></label>
-	</p>
 	<h4><?php _e('Default style', 'foxtool'); ?></h4>
 	<p style="display:flex;align-items:center;">
 	<input class="ft-input-color" name="foxtool_settings[chat-nut-color]" type="text" data-coloris value="<?php if(!empty($foxtool_options['chat-nut-color'])){echo $foxtool_options['chat-nut-color'];} ?>"/>
@@ -141,7 +158,7 @@ global $foxtool_options; ?>
 	</p>
 	<p>
 	<?php $styles = array('Icon1', 'Icon2', 'Icon3', 'Icon4', 'Icon5'); ?>
-	<select style="width:120px;" name="foxtool_settings[chat-nut-ico]"> 
+	<select name="foxtool_settings[chat-nut-ico]"> 
 	<?php foreach($styles as $style) { ?> 
 	<?php if(isset($foxtool_options['chat-nut-ico']) && $foxtool_options['chat-nut-ico'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
@@ -163,7 +180,7 @@ global $foxtool_options; ?>
 	</p>
 	<p>
 	<?php $styles = array('Left', 'Right'); ?>
-	<select style="width:120px;" name="foxtool_settings[chat-nut-mar]"> 
+	<select name="foxtool_settings[chat-nut-mar]"> 
 	<?php foreach($styles as $style) { ?> 
 	<?php if(isset($foxtool_options['chat-nut-mar']) && $foxtool_options['chat-nut-mar'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
@@ -197,13 +214,43 @@ global $foxtool_options; ?>
 	<span class="slider"></span></label>
 	<label class="ft-label-right"><?php _e('Enable contact bar', 'foxtool'); ?></label>
 	</p>
+	<p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[chat-nav-js]" value="1" <?php if ( isset($foxtool_options['chat-nav-js']) && 1 == $foxtool_options['chat-nav-js'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Hide bar when pulled down', 'foxtool'); ?></label>
+	</p>
+	<h4><?php _e('Display options', 'foxtool'); ?></h4>
+	<div id="ft-imgstyle4" class="ft-imgstyle ft-imgstyle5">
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/n1.png'); ?>" data-value="Default" class="<?php if(isset($foxtool_options['chat-nav-skin']) && $foxtool_options['chat-nav-skin'] == 'Default') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/n2.png'); ?>" data-value="Simple" class="<?php if(isset($foxtool_options['chat-nav-skin']) && $foxtool_options['chat-nav-skin'] == 'Simple') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/n3.png'); ?>" data-value="Docky" class="<?php if(isset($foxtool_options['chat-nav-skin']) && $foxtool_options['chat-nav-skin'] == 'Docky') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/n4.png'); ?>" data-value="Momo" class="<?php if(isset($foxtool_options['chat-nav-skin']) && $foxtool_options['chat-nav-skin'] == 'Momo') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/chat/n5.png'); ?>" data-value="Lom" class="<?php if(isset($foxtool_options['chat-nav-skin']) && $foxtool_options['chat-nav-skin'] == 'Lom') echo 'selected'; ?>" />
+	</div>
+	<input type="hidden" name="foxtool_settings[chat-nav-skin]" id="chat-nav-skin" value="<?php if(!empty($foxtool_options['chat-nav-skin'])){echo sanitize_text_field($foxtool_options['chat-nav-skin']);} else {echo sanitize_text_field('Default');} ?>" />
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var imgStyles = document.querySelectorAll('#ft-imgstyle4 img');
+			imgStyles.forEach(function(img) {
+				img.addEventListener('click', function() {
+					var selectedStyle = this.getAttribute('data-value');
+					document.getElementById('chat-nav-skin').value = selectedStyle;
+					imgStyles.forEach(function(img) {
+						img.classList.remove('selected');
+					});
+					this.classList.add('selected');
+				});
+			});
+		});
+	</script>
+	<h4><?php _e('Main button', 'foxtool'); ?></h4>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Enable the contact bar and configure the content below for use', 'foxtool'); ?><br>
 	<?php _e('Visit this page to get the SVG icon:', 'foxtool'); ?> <b><a target="_blank" href="https://lineicons.com/free-icons">lineicons.com</a> [Copy SVG]</b><br>
 	<b><?php _e('To create a menu on the navigation bar:', 'foxtool'); ?></b><br>
 	<?php _e('Step 1: Go to Appearance > Menus > Create a new menu > check Navigation bar (Foxtool)', 'foxtool'); ?><br>
 	<?php _e('Step 2: Below, if you want the menu to open on a specific button, add <b style="color:red">#foxnavi</b> to the field (#id or .class). For (Enter link), enter <b style="color:red">#</b>. Note: Only add it to one of the 5 buttons below', 'foxtool'); ?>
 	</p>
-	<h4><?php _e('Main button', 'foxtool'); ?></h4>
 	<div class="ft-button-grid2">
 		<div class="ft-button-grid-in2">
 			<textarea style="height:60px;" class="ft-code-textarea" name="foxtool_settings[chat-nav01]" placeholder="<?php _e('Enter the SVG icon', 'foxtool'); ?>"><?php if(!empty($foxtool_options['chat-nav01'])){echo esc_textarea($foxtool_options['chat-nav01']);} ?></textarea>
@@ -249,23 +296,7 @@ global $foxtool_options; ?>
 		}
 	});
 	</script>
-	<h4><?php _e('Display options', 'foxtool'); ?></h4>
-	<p>
-	<?php $styles = array('Default', 'Simple', 'Docky', 'Momo', 'Lom'); ?>
-	<select style="width:120px;" name="foxtool_settings[chat-nav-skin]"> 
-	<?php foreach($styles as $style) { ?> 
-	<?php if(isset($foxtool_options['chat-nav-skin']) && $foxtool_options['chat-nav-skin'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
-	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
-	<?php } ?> 
-	</select>
-	<label class="ft-right-text"><?php _e('Select display type', 'foxtool'); ?></label>
-	</p>
-	<p>
-	<label class="nut-switch">
-	<input type="checkbox" name="foxtool_settings[chat-nav-js]" value="1" <?php if ( isset($foxtool_options['chat-nav-js']) && 1 == $foxtool_options['chat-nav-js'] ) echo 'checked="checked"'; ?> />
-	<span class="slider"></span></label>
-	<label class="ft-label-right"><?php _e('Hide bar when pulled down', 'foxtool'); ?></label>
-	</p>
+	<h4><?php _e('Customize', 'foxtool'); ?></h4>
 	<select id="foxtool-toc-page-select">
 		<option value=""><?php _e('Select the page to hide', 'foxtool'); ?></option>
 		<?php
@@ -332,14 +363,9 @@ global $foxtool_options; ?>
 		updateNoPageMessage();
 	});
 	</script>
-	<h4><?php _e('Color options', 'foxtool'); ?></h4>
 	<p style="display:flex;align-items:center;">
 	<input class="ft-input-color" name="foxtool_settings[chat-nav-c1]" type="text" data-coloris value="<?php if(!empty($foxtool_options['chat-nav-c1'])){echo $foxtool_options['chat-nav-c1'];} ?>"/>
 	<label class="ft-right-text"><?php _e('Outstanding color', 'foxtool'); ?></label>
-	</p>
-	<p style="display:flex;align-items:center;">
-	<input class="ft-input-color" name="foxtool_settings[chat-nav-c2]" type="text" data-coloris value="<?php if(!empty($foxtool_options['chat-nav-c2'])){echo $foxtool_options['chat-nav-c2'];} ?>"/>
-	<label class="ft-right-text"><?php _e('Main icon background color', 'foxtool'); ?></label>
 	</p>
 	<p style="display:flex;align-items:center;">
 	<input class="ft-input-color" name="foxtool_settings[chat-nav-c3]" type="text" data-coloris value="<?php if(!empty($foxtool_options['chat-nav-c3'])){echo $foxtool_options['chat-nav-c3'];} ?>"/>
@@ -361,15 +387,4 @@ global $foxtool_options; ?>
 	<input class="ft-input-color" name="foxtool_settings[chat-nav-c6]" type="text" data-coloris value="<?php if(!empty($foxtool_options['chat-nav-c6'])){echo $foxtool_options['chat-nav-c6'];} ?>"/>
 	<label class="ft-right-text"><?php _e('Chat text color', 'foxtool'); ?></label>
 	</p>
-  <h3><i class="fa-regular fa-message-lines"></i> <?php _e('Tawk.to', 'foxtool') ?></h3>
-	<p>
-	<label class="nut-switch">
-	<input type="checkbox" name="foxtool_settings[chat-tawk1]" value="1" <?php if ( isset($foxtool_options['chat-tawk1']) && 1 == $foxtool_options['chat-tawk1'] ) echo 'checked="checked"'; ?> />
-	<span class="slider"></span></label>
-	<label class="ft-label-right"><?php _e('Enable Tawk.to', 'foxtool'); ?></label>
-	</p>
-	<p>
-	<textarea style="height:200px;" class="ft-code-textarea" name="foxtool_settings[chat-tawk11]" placeholder="<?php _e('Enter Tawk.to code', 'foxtool'); ?>"><?php if(!empty($foxtool_options['chat-tawk11'])){echo esc_textarea($foxtool_options['chat-tawk11']);} ?></textarea>
-	</p>
-	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Enable Tawk.to and add its code to use it', 'foxtool'); ?></p>
 </div>		

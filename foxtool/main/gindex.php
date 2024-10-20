@@ -11,9 +11,13 @@ function foxtool_gindex_options_page() {
 	<div class="ft-wrap2">
 	  <div class="ft-box">
 		<div class="ft-menu">
-			<div class="ft-logo"><?php foxtool_logo(); ?></div>
+			<div class="ft-logo ft-logoquay">
+			<a class="ft-logoquaya" href="https://foxplugin.com" target="_blank">
+			<span><?php foxtool_logo(); ?></span>
+			</a>
+			</div>
 			<button class="sotab sotab-select" onclick="fttab(event, 'tab1')"><i class="fa-regular fa-hand-point-up"></i> <?php _e('INDEX', 'foxtool'); ?></button>
-			<button class="sotab" onclick="fttab(event, 'tab2')"><i class="fa-regular fa-screwdriver-wrench"></i> <?php _e('SETTING', 'foxtool'); ?></button>
+			<button class="sotab" onclick="fttab(event, 'tab2')"><i class="fa-regular fa-gear"></i> <?php _e('SETTING', 'foxtool'); ?></button>
 		</div>
 
 		<div class="ft-main">
@@ -28,7 +32,7 @@ function foxtool_gindex_options_page() {
 			<div class="sotab-box ftbox" id="tab1" style="margin-bottom:-60px;">
 			<h2><?php _e('INDEX', 'foxtool'); ?></h2>
 			<div class="ft-card">
-			  <h3><i class="fa-regular fa-hand-point-up"></i> <?php _e('Google index function', 'foxtool') ?></h3>
+			  <h3><i class="fa-regular fa-hand-point-up"></i> <?php _e('Enter manually', 'foxtool') ?></h3>
 			    
 				<?php 
 				// bo dem requet tông
@@ -54,8 +58,7 @@ function foxtool_gindex_options_page() {
 					echo '</div>';
 				}
 				?>
-				<textarea style="height:450px" class="ft-code-textarea" name="foxtool_gindex_settings[url]" placeholder="<?php _e('Enter the url', 'foxtool'); ?>"></textarea>
-				<?php if ( isset($foxtool_gindex_options['index1'])){ ?>
+				<textarea style="height:500px" class="ft-code-textarea" name="foxtool_gindex_settings[url]" placeholder="<?php _e('Enter the url', 'foxtool'); ?>"></textarea>
 				<div class="ft-index-nut">
 					<span class="index-action" data-action="update"><i class="fa-regular fa-play"></i> <?php _e('INDEX', 'foxtool'); ?></span>
 					<span class="index-action" data-action="delete"><i class="fa-regular fa-trash"></i> <?php _e('DEL', 'foxtool'); ?></span>
@@ -63,21 +66,13 @@ function foxtool_gindex_options_page() {
 				</div>
 				<div class="emed" style="display:none"><div class="ft-sload"></div> <?php _e('Please wait', 'foxtool'); ?></div>
 				<div id="index-bao"></div>
-				<?php } ?>
 			</div>	
 			</div>
 			<!-- SETTING -->
 			<div class="sotab-box ftbox" id="tab2" style="display:none">
 			<h2><?php _e('SETTING', 'foxtool'); ?></h2>
 			<div class="ft-card">
-			  <h3><i class="fa-regular fa-screwdriver-wrench"></i> <?php _e('Set Google api index', 'foxtool') ?></h3>
-			    <p>
-				<label class="nut-switch">
-				<input type="checkbox" name="foxtool_gindex_settings[index1]" value="1" <?php if ( isset($foxtool_gindex_options['index1']) && 1 == $foxtool_gindex_options['index1'] ) echo 'checked="checked"'; ?> />
-				<span class="slider"></span></label>
-				<label class="ft-label-right"><?php _e('Enable index', 'foxtool'); ?></label>
-				</p>
-				<h4><?php _e('Automatically index when published', 'foxtool') ?></h4>
+			  <h3><i class="fa-regular fa-gear"></i> <?php _e('Configure Google index API', 'foxtool') ?></h3>
 				<?php 
 				$args = array(
 				'public'   => true,
@@ -97,8 +92,8 @@ function foxtool_gindex_options_page() {
 					<?php
 				}
 				?>
-				<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('You can enable the post types you want so that when you press publish, it will automatically index', 'foxtool'); ?></p>
-				<h4><?php _e('Add unlimited Google index json', 'foxtool') ?></h4>
+				<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('The "Index Now" link will be added in the custom post management section to allow quick index submission', 'foxtool'); ?></p>
+				<h4><?php _e('Add Google json code', 'foxtool') ?></h4>
 				<div id="sortable-list">
 				<div data-id="1" class="ui-state-default ft-button-grid">
 				<textarea style="height:200px" class="ft-code-textarea" name="foxtool_gindex_settings[json1]" placeholder="<?php _e('Enter json', 'foxtool'); ?>"><?php if(!empty($foxtool_gindex_options['json1'])){echo esc_textarea($foxtool_gindex_options['json1']);} ?></textarea>
@@ -235,4 +230,9 @@ function foxtool_gindex_register_settings() {
 	register_setting('foxtool_gindex_settings_group', 'foxtool_gindex_settings');
 }
 add_action('admin_init', 'foxtool_gindex_register_settings');
+// clear cache
+function foxtool_gindex_settings_cache($old_value, $value) {
+    wp_cache_delete('foxtool_gindex_settings', 'options');
+}
+add_action('update_option_foxtool_gindex_settings', 'foxtool_gindex_settings_cache', 10, 2);
 

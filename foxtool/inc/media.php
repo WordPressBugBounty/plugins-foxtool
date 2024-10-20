@@ -4,13 +4,15 @@ global $foxtool_options;
 # tu dong dat ten tu dong khi tai len
 if(isset($foxtool_options['media-title1'])){
 function foxtool_custom_upload_filename($file) {
-	$filename = $file['name'];
-	$info = pathinfo($filename);
-	$ext = !empty($info['extension']) ? '.' . $info['extension'] : '';
-	$domain = str_replace('.', '-', parse_url(get_bloginfo('url'), PHP_URL_HOST));
-	$new_filename = $domain . '-' . wp_generate_password(10, false) . $ext;
-	$file['name'] = $new_filename;
-	return $file;
+    $filename = $file['name'];
+    $info = pathinfo($filename);
+    $ext = !empty($info['extension']) ? '.' . $info['extension'] : '';
+    $domain = str_replace('.', '-', parse_url(get_bloginfo('url'), PHP_URL_HOST));
+    $base_name = $domain . $ext;
+    $upload_dir = wp_upload_dir();
+    $unique_filename = wp_unique_filename($upload_dir['path'], $base_name);
+    $file['name'] = $unique_filename;
+    return $file;
 }
 add_filter('wp_handle_upload_prefilter', 'foxtool_custom_upload_filename');
 }
@@ -68,22 +70,6 @@ function foxtool_delete_all_thumbnails($attachment_id, $thumbnail_name) {
     }
     return $deleted_count; // Trả về số lượng hình đã xóa
 }
-// ajax xoa file crop
-function foxtool_delete_images_by_size_callback() {
-    check_ajax_referer('foxtool_delete_crop_nonce', 'security');
-    if (!current_user_can('manage_options')){
-        wp_die(__('Insufficient permissions', 'foxtool'));
-    }
-    $size_name = isset($_POST['size']) ? $_POST['size'] : '';
-    if ($size_name !== '') {
-        $limit = 500; // Giới hạn số lượng hình muốn xóa
-        $deleted_count = foxtool_delete_thumbnails($size_name, $limit);
-        wp_send_json_success(__('Deleted', 'foxtool') .' '. $size_name . ': ' . $deleted_count . ' ' . __('images', 'foxtool'));
-    } else {
-        wp_send_json_error(__('No size', 'foxtool'));
-    }
-}
-add_action('wp_ajax_foxtool_delete_images_by_size', 'foxtool_delete_images_by_size_callback');
 # han che tai len file 
 if (isset($foxtool_options['media-up2']) && !empty($foxtool_options['media-up21'])){ 
 function foxtool_change_upload_size(){
@@ -128,18 +114,19 @@ $foxtool_keypng = [
     'media-webp1',
     'media-avif2',
     'media-zip2',
-    'media-logo1'
+	'media-cutop1',
+    'media-logo1',
 ];
-if (array_filter($foxtool_keypng, fn($key) => isset($foxtool_options[$key]))) {
-function foxtool_png_8bit_to_32bit($file) {
+if (array_filter($foxtool_keypng, fn($key) => isset($foxtool_options[$key])) && !isset($foxtool_options['media-png-8'])) {
+	function foxtool_png_8bit_to_32bit($file) {
     $file_type = $file['type'];
     if ($file_type === 'image/png') {
         $image = imagecreatefrompng($file['tmp_name']);
-        $bit_depth = imageistruecolor($image) ? 32 : 8;
+        $bit_depth = imageistruecolor($image) ? 32 : 8;  
         if ($bit_depth === 8) {
             $width = imagesx($image);
             $height = imagesy($image);
-            $image_32bit = imagecreatetruecolor($width, $height);
+            $image_32bit = imagecreatetruecolor($width, $height); 
             imagealphablending($image_32bit, false);
             imagesavealpha($image_32bit, true);
             $transparent_index = imagecolortransparent($image);
@@ -150,12 +137,12 @@ function foxtool_png_8bit_to_32bit($file) {
                     $transparent_color['red'], 
                     $transparent_color['green'], 
                     $transparent_color['blue'], 
-                    127
+                    127 
                 );
-                imagefill($image_32bit, 0, 0, $alpha_color);
+                imagefill($image_32bit, 0, 0, $alpha_color); 
             } else {
-                $alpha_color = imagecolorallocatealpha($image_32bit, 0, 0, 0, 127);
-                imagefill($image_32bit, 0, 0, $alpha_color);
+                $alpha_color = imagecolorallocatealpha($image_32bit, 0, 0, 0, 127); 
+                imagefill($image_32bit, 0, 0, $alpha_color); 
             }
             imagecopy($image_32bit, $image, 0, 0, 0, 0, $width, $height);
             imagepng($image_32bit, $file['tmp_name']);
@@ -389,90 +376,296 @@ function foxtool_image_resize($file) {
 }
 add_filter('wp_handle_upload_prefilter', 'foxtool_image_resize');
 }
-# Hàm thêm watermark cho hinh anh tai len
-if(isset($foxtool_options['media-logo1'])){
-function foxtool_add_watermark($attachment_id) {
+# khung thoi ma
+function foxtool_toRGBA($mau) {
+    if (strpos($mau, 'rgba') === 0) {
+        $rgba_values = sscanf($mau, "rgba(%d, %d, %d, %f)");
+        $alpha = 127 - round($rgba_values[3] * 127); 
+        return [$rgba_values[0], $rgba_values[1], $rgba_values[2], $alpha];
+    } elseif (strpos($mau, 'rgb') === 0) {
+        $rgb_values = sscanf($mau, "rgb(%d, %d, %d)");
+        return array_merge($rgb_values, [0]); 
+    } elseif (strpos($mau, '#') === 0) {
+        if (strlen($mau) == 7) {
+            list($r, $g, $b) = sscanf($mau, "#%02x%02x%02x");
+            return [$r, $g, $b, 0]; 
+        } elseif (strlen($mau) == 9) {
+            list($r, $g, $b, $a) = sscanf($mau, "#%02x%02x%02x%02x");
+            $alpha = 127 - round($a / 255 * 127); 
+            return [$r, $g, $b, $alpha];
+        }
+    }
+    return [0, 0, 0, 0];
+}
+if (isset($foxtool_options['media-cutop1'])){
+function foxtool_add_borderimg($param1, $param2 = null) {
+    global $foxtool_options;
+    // Kiểm tra và lấy attachment_id và original_file
+    if (is_null($param2)) {
+        $attachment_id = $param1;
+        $original_file = get_attached_file($attachment_id);
+        $metadata = wp_generate_attachment_metadata($attachment_id, $original_file);
+    } else {
+        $metadata = $param1;
+        $attachment_id = $param2;
+        $original_file = get_attached_file($attachment_id);
+    }
+    // Kiểm tra và lấy đường dẫn khung
+    if (!empty($foxtool_options['media-cutop11']) && empty($foxtool_options['media-cutop12'])) {
+        $logo = esc_url(FOXTOOL_URL . 'img/khung/' . $foxtool_options['media-cutop11'] . '.png');
+    } elseif (!empty($foxtool_options['media-cutop12'])) {
+        $logo = esc_url($foxtool_options['media-cutop12']);
+    } else {
+        $logo = esc_url(FOXTOOL_URL . 'img/khung/1.png');
+    }
+    // Kiểm tra xem logo có hợp lệ không
+    $headers = @get_headers($logo);
+    if (!$headers || strpos($headers[0], '200') === false) {
+        return $metadata;
+    }
+    // Kiểm tra phần mở rộng của file ảnh
+    $extension = pathinfo($logo, PATHINFO_EXTENSION);
+    if (!in_array($extension, ['png', 'jpg', 'jpeg'])) {
+        return $metadata;
+    }
+    $watermark_path = $logo;
+    // Thêm khung vào ảnh gốc nếu tệp tồn tại
+    if ($original_file && file_exists($original_file)) {
+        foxtool_apply_add_borderimg($original_file, $watermark_path);
+    }
+    // Thêm khung vào tất cả các kích thước ảnh khác nếu không phải là add_attachment
+    if (!is_null($param2)) {
+        foreach ($metadata['sizes'] as $size => $data) {
+            $resized_file = str_replace(basename($original_file), $data['file'], $original_file);
+            // Kiểm tra xem tệp đã resized có tồn tại không
+            if ($resized_file && file_exists($resized_file)) {
+                foxtool_apply_add_borderimg($resized_file, $watermark_path);
+            }
+        }
+    }
+    return $metadata;
+}
+// Hàm để áp dụng khung cho ảnh cụ thể
+function foxtool_apply_add_borderimg($file, $watermark_path) {
 	global $foxtool_options;
-	if (empty($foxtool_options['media-logo10']) && empty($foxtool_options['media-logo11'])) {return;}
-	$logo = '';
-	$logotext = '';
-	if(!empty($foxtool_options['media-logo11'])) {
-		$logo = $foxtool_options['media-logo11'];
-		// Kiểm tra xem ảnh logo có thể truy cập được hay không
-		$headers = @get_headers($logo);
-		if(!$headers || strpos($headers[0], '200') === false) {
-			return;
-		}
-		// Kiểm tra phần mở rộng của file ảnh
-		$extension = pathinfo($logo, PATHINFO_EXTENSION);
-		if (!in_array($extension, ['png', 'jpg', 'jpeg'])) {
-			return;
-		}
-	} elseif (!empty($foxtool_options['media-logo10'])) {
-		$logotext = $foxtool_options['media-logo10'];
-	} 
-    $watermark_path = $logo; 
-    $attachment = get_post($attachment_id);
-    $file = get_attached_file($attachment_id);
-    $mime_type = get_post_mime_type($attachment);
-    
-    if (strpos($mime_type, 'image') !== false) { 
-		if (!preg_match('/image\/(png|jpeg|jpg|webp|avif)/', $mime_type)) {return;}
-		switch ($mime_type) {
-			case 'image/webp':
-				$image = @imagecreatefromwebp($file);
-				break;
-			case 'image/jpeg':
-			case 'image/jpg':
-				$image = @imagecreatefromjpeg($file);
-				break;
-			case 'image/png':
-				$image = @imagecreatefrompng($file);
-				break;
-			case 'image/avif':
-				if (function_exists('imagecreatefromavif') && function_exists('imageavif')) {
-					$image = @imagecreatefromavif($file);
-				} else {
-					return; 
-				}
-				break;
-			default:
-				return; 
-		}
-        if ($image === false) {return;}
+    $mime_type = wp_check_filetype($file)['type'];
+    if (strpos($mime_type, 'image') !== false) {
+        $image = false;
+        switch ($mime_type) {
+            case 'image/webp':
+                $image = @imagecreatefromwebp($file);
+                break;
+            case 'image/jpeg':
+            case 'image/jpg':
+                $image = @imagecreatefromjpeg($file);
+                break;
+            case 'image/png':
+                $image = @imagecreatefrompng($file);
+                break;
+            case 'image/avif':
+                if (function_exists('imagecreatefromavif') && function_exists('imageavif')) {
+                    $image = @imagecreatefromavif($file);
+                }
+                break;
+        }
+
+        if ($image === false) {
+            return;
+        }
+        // Kích thước ảnh
+        $image_width = imagesx($image);
+        $image_height = imagesy($image);
 		// Kiểm tra xem ảnh có dưới 12-bit không
         if (function_exists('imageistruecolor') && !imageistruecolor($image)) {return;}
-		
+        $image_width = imagesx($image);
+        $image_height = imagesy($image);
+		if (isset($foxtool_options['media-cutop13'])){
+			imageflip($image, IMG_FLIP_HORIZONTAL);
+		}
+		// Tải watermark (border image)
+		$watermark = imagecreatefrompng($watermark_path);
+		$watermark_width = imagesx($watermark);
+		$watermark_height = imagesy($watermark);
+		// Tạo watermark mới có kích thước khớp với ảnh upload lên
+		$resized_watermark = imagecreatetruecolor($image_width, $image_height);
+		imagealphablending($resized_watermark, false);
+		imagesavealpha($resized_watermark, true);
+		// Thay đổi kích thước watermark để khớp với kích thước ảnh
+		imagecopyresampled(
+			$resized_watermark, $watermark, 0, 0, 0, 0, 
+			$image_width, $image_height, $watermark_width, $watermark_height
+		);
+		if (!empty($foxtool_options['media-cutop14']) && $foxtool_options['media-cutop14'] != 100) {
+			$opacity = $foxtool_options['media-cutop14']; 
+			$watermark_width = intval($image_width);
+			$watermark_height = intval($image_height);
+			// Duyệt qua từng pixel của watermark để điều chỉnh độ trong suốt
+			for ($x = 0; $x < $watermark_width; $x++) {
+				for ($y = 0; $y < $watermark_height; $y++) {
+					if ($x >= 0 && $x < imagesx($resized_watermark) && $y >= 0 && $y < imagesy($resized_watermark)) {
+						$color = imagecolorsforindex($resized_watermark, imagecolorat($resized_watermark, $x, $y));
+						$alpha = min(127, intval($color['alpha'] + (127 * (100 - $opacity) / 100)));
+						$new_color = imagecolorallocatealpha($resized_watermark, $color['red'], $color['green'], $color['blue'], $alpha);
+						imagesetpixel($resized_watermark, $x, $y, $new_color);
+					}
+				}
+			}
+		}
+		// lớp phu mau del
+		if (!empty($foxtool_options['media-cutop-c1'])) {
+			$mau = $foxtool_options['media-cutop-c1']; 
+			list($r, $g, $b, $alpha) = foxtool_toRGBA($mau);
+			$alpha = min($alpha + 70, 127);
+			$overlay = imagecreatetruecolor($image_width, $image_height);
+			$color = imagecolorallocatealpha($overlay, $r, $g, $b, $alpha);
+			imagefill($overlay, 0, 0, $color);
+			imagecopy($image, $overlay, 0, 0, 0, 0, $image_width, $image_height);
+		}
+		imagecopy($image, $resized_watermark, 0, 0, 0, 0, $image_width, $image_height);
+		if ($mime_type === 'image/webp') {
+            imagewebp($image, $file);
+        } elseif ($mime_type == 'image/jpeg') {
+            imagejpeg($image, $file);
+        } elseif ($mime_type == 'image/png') {
+            imagepng($image, $file);
+        } elseif ($mime_type == 'image/avif'){
+			imageavif($image, $file);
+		}
+		// Giải phóng bộ nhớ
+		imagedestroy($image);
+		imagedestroy($resized_watermark);
+		imagedestroy($watermark);
+		// lop phu del
+		if (!empty($foxtool_options['media-cutop-c1'])) {
+			imagedestroy($overlay); 
+		}
+    }
+}
+if (isset($foxtool_options['media-cutop-hook']) && !isset($foxtool_options['media-png-8'])){
+	add_filter('wp_generate_attachment_metadata', 'foxtool_add_borderimg', 10, 2);
+} else {
+	add_action('add_attachment', 'foxtool_add_borderimg');
+}
+}
+# Hàm thêm watermark cho hinh anh tai len
+if(isset($foxtool_options['media-logo1'])){
+function foxtool_add_watermark($param1, $param2 = null) {
+    global $foxtool_options;
+    // Kiểm tra và lấy attachment_id và original_file
+    if (is_null($param2)) {
+        $attachment_id = $param1;
+        $original_file = get_attached_file($attachment_id);
+        $metadata = wp_generate_attachment_metadata($attachment_id, $original_file);
+    } else {
+        $metadata = $param1;
+        $attachment_id = $param2;
+        $original_file = get_attached_file($attachment_id);
+    }
+    // Kiểm tra tùy chọn watermark
+    if (empty($foxtool_options['media-logo10']) && empty($foxtool_options['media-logo11'])) {
+        return $metadata;
+    }
+    $logo = '';
+    $logotext = '';
+    // Kiểm tra logo
+    if (!empty($foxtool_options['media-logo11'])) {
+        $logo = $foxtool_options['media-logo11'];
+        $headers = @get_headers($logo);
+        if (!$headers || strpos($headers[0], '200') === false) {
+            $logo = ''; 
+        }
+
+        // Kiểm tra phần mở rộng của file ảnh
+        $extension = pathinfo($logo, PATHINFO_EXTENSION);
+        if (!in_array($extension, ['png', 'jpg', 'jpeg'])) {
+            $logo = ''; 
+        }
+    }
+    // Xử lý text watermark nếu không có logo
+    if (empty($logo) && !empty($foxtool_options['media-logo10'])) {
+        $logotext = $foxtool_options['media-logo10'];
+    }
+    // Nếu cả logo và text đều rỗng thì return metadata
+    if (empty($logo) && empty($logotext)) {
+        return $metadata;
+    }
+    // Gán đường dẫn watermark hoặc xử lý text watermark
+    $watermark_path = !empty($logo) ? $logo : '';
+    // Thêm watermark vào ảnh gốc nếu tệp tồn tại
+    if ($original_file && file_exists($original_file)) {
+        foxtool_apply_watermark($original_file, $watermark_path, $logotext);
+    }
+    // Thêm watermark vào tất cả các kích thước ảnh khác nếu không phải là add_attachment
+    if (!is_null($param2)) {
+        foreach ($metadata['sizes'] as $size => $data) {
+            $resized_file = str_replace(basename($original_file), $data['file'], $original_file);
+            // Kiểm tra xem tệp đã resized có tồn tại không
+            if ($resized_file && file_exists($resized_file)) {
+                foxtool_apply_watermark($resized_file, $watermark_path, $logotext);
+            }
+        }
+    }
+    return $metadata;    
+}
+function foxtool_apply_watermark($file, $watermark_path = '', $logotext = '') {
+	global $foxtool_options;
+	$mime_type = wp_check_filetype($file)['type'];
+    if (strpos($mime_type, 'image') !== false) {
+        $image = false;
+        switch ($mime_type) {
+            case 'image/webp':
+                $image = @imagecreatefromwebp($file);
+                break;
+            case 'image/jpeg':
+            case 'image/jpg':
+                $image = @imagecreatefromjpeg($file);
+                break;
+            case 'image/png':
+                $image = @imagecreatefrompng($file);
+                break;
+            case 'image/avif':
+                if (function_exists('imagecreatefromavif') && function_exists('imageavif')) {
+                    $image = @imagecreatefromavif($file);
+                }
+                break;
+        }
+
+        if ($image === false) {
+            return;
+        }
+		// Kiểm tra xem ảnh có dưới 12-bit không
+        if (function_exists('imageistruecolor') && !imageistruecolor($image)) {return;}
         $image_width = imagesx($image);
         $image_height = imagesy($image);
 		// neu anh cao nho hon 200 thi khong them logo
 		if ($image_height < 200) {return;}
-		if (!empty($logotext)) {
-			$font_file = FOXTOOL_DIR . 'font/logo.ttf'; 
-			$font_size = 50; 
-			$text = $logotext;
-			$bbox = imagettfbbox($font_size, 0, $font_file, $text);
-			$text_width = $bbox[2] - $bbox[0];
-			$text_height = $bbox[1] - $bbox[7];
-			$watermark_width = $text_width + 30; 
-			$watermark_height = $text_height + 30; 
-			$watermark = imagecreatetruecolor($watermark_width, $watermark_height);
-			imagealphablending($watermark, false);
-			imagesavealpha($watermark, true);
-			$transparent_color = imagecolorallocatealpha($watermark, 0, 0, 0, 127);
-			imagefilledrectangle($watermark, 0, 0, $watermark_width, $watermark_height, $transparent_color);
-			$hex_color = !empty($foxtool_options['media-logo10-c1']) ? $foxtool_options['media-logo10-c1'] : '#999999';
-			list($r, $g, $b) = sscanf($hex_color, "#%02x%02x%02x");
-			$text_color = imagecolorallocate($watermark, $r, $g, $b); 
-			$x = round(($watermark_width - $text_width) / 2);
-			$y = round(($watermark_height - $text_height) / 2 + $text_height);
-			imagettftext($watermark, $font_size, 0, $x, $y, $text_color, $font_file, $text);
-		} else {
+		// Xử lý text watermark
+        if (!empty($logotext)) {
+            $font_file = FOXTOOL_DIR . 'font/logo.ttf'; 
+            $font_size = 50; 
+            $text = $logotext;
+            $bbox = imagettfbbox($font_size, 0, $font_file, $text);
+            $text_width = $bbox[2] - $bbox[0];
+            $text_height = $bbox[1] - $bbox[7];
+            $watermark_width = $text_width + 30; 
+            $watermark_height = $text_height + 30; 
+            $watermark = imagecreatetruecolor($watermark_width, $watermark_height);
+            imagealphablending($watermark, false);
+            imagesavealpha($watermark, true);
+            $transparent_color = imagecolorallocatealpha($watermark, 0, 0, 0, 127);
+            imagefilledrectangle($watermark, 0, 0, $watermark_width, $watermark_height, $transparent_color);
+            $hex_color = !empty($foxtool_options['media-logo10-c1']) ? $foxtool_options['media-logo10-c1'] : '#999999';
+			list($r, $g, $b) = foxtool_toRGBA($hex_color);
+            $text_color = imagecolorallocate($watermark, $r, $g, $b); 
+            $x = round(($watermark_width - $text_width) / 2);
+            $y = round(($watermark_height - $text_height) / 2 + $text_height);
+            imagettftext($watermark, $font_size, 0, $x, $y, $text_color, $font_file, $text);
+        } else {
+            // Xử lý logo watermark
             $watermark = imagecreatefrompng($watermark_path);
             $watermark_width = imagesx($watermark);
             $watermark_height = imagesy($watermark);
-        }
-		
+        } 
 		if (!empty($foxtool_options['media-logo13'])) {
 			$ratio = $foxtool_options['media-logo13']; 
 			$watermark_ratio = $ratio / 100;
@@ -557,35 +750,15 @@ function foxtool_add_watermark($attachment_id) {
 			imageavif($image, $file);
 		}
     }
+
 }
-add_action('add_attachment', 'foxtool_add_watermark');
+if (isset($foxtool_options['media-logo-hook']) && !isset($foxtool_options['media-png-8'])){
+	add_filter('wp_generate_attachment_metadata', 'foxtool_add_watermark', 10, 2);
+} else {
+	add_action('add_attachment', 'foxtool_add_watermark');
 }
-# xóa ảnh 404 trong media
-function foxtool_delete_404_attachments() {
-    check_ajax_referer('foxtool_media_del', 'security');
-    if (!current_user_can('manage_options')){
-        wp_die(__('Insufficient permissions', 'foxtool'));
-    }
-    $number = 200; 
-    $deletedCount = 0;
-    $attachments = get_posts(array(
-        'post_type' => 'attachment',
-        'numberposts' => $number,
-        'fields' => 'ids'
-    ));
-    if ($attachments) {
-        foreach ($attachments as $attachmentID) {
-            $file_path = get_attached_file($attachmentID);
-            if ($file_path && !file_exists($file_path)) {
-                wp_delete_attachment($attachmentID, true);
-                $deletedCount++;
-            }
-        }
-    }
-    wp_send_json_success(array('deleted_count' => $deletedCount));
 }
-add_action('wp_ajax_foxtool_delete_media', 'foxtool_delete_404_attachments');
-// add media adminbar
+# add media adminbar
 function foxtool_watermark_checkbox_adminbar($wp_admin_bar) {
     if ( !is_admin() || !current_user_can('manage_options') ) {
         return;
@@ -598,6 +771,7 @@ function foxtool_watermark_checkbox_adminbar($wp_admin_bar) {
     $watermark_enabled4 = isset($foxtool_options['media-avif2']) && $foxtool_options['media-avif2'] == 1;
     $watermark_enabled5 = isset($foxtool_options['media-zip2']) && $foxtool_options['media-zip2'] == 1;
     $watermark_enabled6 = isset($foxtool_options['media-logo1']) && $foxtool_options['media-logo1'] == 1;
+	$watermark_enabled7 = isset($foxtool_options['media-cutop1']) && $foxtool_options['media-cutop1'] == 1;
     // Tạo node chính
     $args = array(
         'id'    => 'foxtool-adw',
@@ -665,6 +839,16 @@ function foxtool_watermark_checkbox_adminbar($wp_admin_bar) {
         'parent' => 'foxtool-adw',
     );
     $wp_admin_bar->add_node($checkbox_args6);
+	// Tạo checkbox 7
+    $checkbox_args7 = array(
+        'id'    => 'foxtool-awc7',
+        'title' => sprintf(
+            '<label><input type="checkbox" id="ft-watermark-checkbox7" %s /> '. __('Enable picture frame', 'foxtool') .'</label>',
+            $watermark_enabled7 ? 'checked="checked"' : ''
+        ),
+        'parent' => 'foxtool-adw',
+    );
+    $wp_admin_bar->add_node($checkbox_args7);
 }
 add_action('admin_bar_menu', 'foxtool_watermark_checkbox_adminbar', 100);
 function foxtool_handletoggle_watermark() {
@@ -708,6 +892,9 @@ function foxtool_watermark_admin_footer() { ?>
                 case 'ft-watermark-checkbox6':
                     optionKey = 'media-logo1';
                     break;
+				case 'ft-watermark-checkbox7':
+                    optionKey = 'media-cutop1';
+                    break;
                 default:
                     return; // Không xác định được checkbox, thoát
             }
@@ -737,8 +924,4 @@ function foxtool_watermark_admin_footer() { ?>
     <?php
 }
 add_action('admin_footer', 'foxtool_watermark_admin_footer');
-
-
-
-
 

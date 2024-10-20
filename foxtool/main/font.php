@@ -13,7 +13,11 @@ function foxtool_font_options_page() {
 	<div class="ft-wrap2">
 	  <div class="ft-box">
 		<div class="ft-menu">
-			<div class="ft-logo"><?php foxtool_logo(); ?></div>
+			<div class="ft-logo ft-logoquay">
+			<a class="ft-logoquaya" href="https://foxplugin.com" target="_blank">
+			<span><?php foxtool_logo(); ?></span>
+			</a>
+			</div>
 			<button class="sotab sotab-select" onclick="fttab(event, 'tab1')"><i class="fa-regular fa-book-font"></i> <?php _e('ADD FONT', 'foxtool'); ?></button>
 			<button class="sotab" onclick="fttab(event, 'tab2')"><i class="fa-regular fa-font-case"></i> <?php _e('USE FONT', 'foxtool'); ?></button>
 		</div>
@@ -54,11 +58,10 @@ function foxtool_font_options_page() {
                             <li>
                                 <article class="ft-box-font">
                                     <div class="ft-box-top">
-                                        <div class="font-name"><?php echo $fontData['font_name'];?></div>
-                                        <div class="font-class"><?php _e('font-family:', 'foxtool'); ?> <?php echo $fontData['font_name'];?>;</div>
+                                        <div class="font-name font-demo <?php echo $fontData['font_name'];?>"><?php echo $fontData['font_name'];?></div>
+                                        <div class="font-class"><?php _e('font-family:', 'foxtool'); ?> '<?php echo $fontData['font_name'];?>', sans-serif;</div>
                                     </div>
                                     <div class="ft-box-dow">
-                                        <span class="font-demo <?php echo $fontData['font_name'];?>">This is a font demo</span>
                                         <div class="font-dele">
 										<a onclick="if (!confirm('<?php _e('Do you want to delete?', 'foxtool'); ?>')){return false;}" href="admin.php?page=foxtool-font-options&delete_font_key=<?php echo $key; ?>"><i class="fa-regular fa-trash"></i></a>
 										</div>
@@ -103,16 +106,17 @@ function foxtool_font_options_page() {
 						'<h4>'. __('Choose a font for the', 'foxtool'). ' <i style="color:#ff4444">h5</i> tag</h4>',
 						'<h4>'. __('Choose a font for the', 'foxtool'). ' <i style="color:#ff4444">h6</i> tag</h4>',
 					);
+					echo '<div class="ft-font-box">';
 					for ($i = 1; $i <= 14; $i++) { 
 					echo '<div class="ft-font-sel">' . $p_contents[$i - 1] . ''; 
 						$selected = ($foxtool_fontset_options['font' . $i] ?? '') === 'Default' ? 'selected="selected"' : ''; ?>
 						<p>
-						<select name="foxtool_fontset_settings[font<?php echo $i; ?>]" class="font-select">
+						<select name="foxtool_fontset_settings[font<?php echo $i; ?>]" class="font-select" style="width:150px;">
 							<option value="Default" <?php echo $selected; ?>>Default</option> 
 							<?php 
 							foreach ($fontsData as $fontData) {
 								$selected = ($foxtool_fontset_options['font' . $i] ?? '') === $fontData['font_name'] ? 'selected="selected"' : ''; ?>
-								<option value="<?php echo $fontData['font_name']; ?>" <?php echo $selected; ?>><?php echo $fontData['font_name']; ?></option> 
+								<option style="font-family:<?php echo $fontData['font_name']; ?>;" value="<?php echo $fontData['font_name']; ?>" <?php echo $selected; ?>><?php echo $fontData['font_name']; ?></option> 
 							<?php } ?>
 						</select>
 						</p>
@@ -120,6 +124,7 @@ function foxtool_font_options_page() {
 						</div>
 					<?php 
 					} 
+					echo '</div>';
 				} 
 				?>
 			<div class="ft-submit">
@@ -200,6 +205,11 @@ function foxtool_font_register_settings() {
 	register_setting('foxtool_fontset_settings_group', 'foxtool_fontset_settings');
 }
 add_action('admin_init', 'foxtool_font_register_settings');
+// clear cache
+function foxtool_fontset_settings_cache($old_value, $value) {
+    wp_cache_delete('foxtool_fontset_settings', 'options');
+}
+add_action('update_option_foxtool_fontset_settings', 'foxtool_fontset_settings_cache', 10, 2);
 
 
 

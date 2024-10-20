@@ -27,7 +27,7 @@ function foxtool_redirect_to_301() {
 			}
 			foreach ($redirects as $uri => $new_location) {
 				$request_uri_trimmed = rtrim($_SERVER['REQUEST_URI'], '/');
-				$uri_trimmed = rtrim($uri, '/');
+				$uri_trimmed = rtrim(parse_url($uri, PHP_URL_PATH), '/'); 
 				if ($request_uri_trimmed === $uri_trimmed) {
 					ob_clean();
 					header("Cache-Control: no-cache, no-store, must-revalidate");
@@ -65,7 +65,7 @@ add_action('init', 'foxtool_redirect_to_301');
 if (isset($foxtool_redirects_options['redi2'])){
 function foxtool_redirect_404_to_home() {
 	global $foxtool_redirects_options;
-	$link = !empty($foxtool_redirects_options['redi21']) ? $foxtool_redirects_options['redi21'] : home_url();
+	$link = !empty($foxtool_redirects_options['redi21']) ? '/'. $foxtool_redirects_options['redi21'] : home_url();
     if (is_404()) {
         wp_redirect($link);
         exit();

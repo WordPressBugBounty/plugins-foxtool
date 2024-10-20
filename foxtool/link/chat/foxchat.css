@@ -10,6 +10,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 .ft-cwha svg{background:#29A71A}
 .ft-cvib svg{background:#6f3faa}
 .ft-csky svg{background:#00a9f0}
+.ft-ctik svg{background:#222222}
 .ft-cmai svg{background:#2196F3}
 .ft-cmap svg{background:#8a56cd}
 .ft-ccus svg{background:#555555}
@@ -44,13 +45,33 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
     box-sizing: border-box;
     line-height: 0;
 	background: #4caf50;
+	position: relative;
+	overflow: hidden;
 }
 .ft-chatbox #chatona svg{
-	width:40px;
-	margin:auto;
+	width:33px !important;
+	height:33px !important;
+	box-sizing: border-box;
+	transition: transform 0.7s ease-in-out;
+}
+.svg-enter {
+  transform: translateX(100%);
+}
+
+.svg-exit {
+  transform: translateX(-100%);
+}
+.svg-enter-active, .svg-exit-active {
+  transform: translateX(0);
+}
+.ft-chatbox #chatona svg path{
+	fill:#fff !important;
+}
+.ft-chatbox #chatona .khacus{
+	width:45px !important;
+	height:45px !important;
 }
 @keyframes logo {
-  100% {transform: translate3d(0, 0, 0) scale(1);}
   100% { box-shadow:0 0 0 20px rgba(0,210,255,0); }
 }
 .ft-chaton {
@@ -281,6 +302,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 .ft-chatbox-skin1 .ft-cwha i, .ft-chatbox-skin3 .ft-cwha i{box-shadow: 0 0 0 0px #29A71A}
 .ft-chatbox-skin1 .ft-cvib i, .ft-chatbox-skin3 .ft-cvib i{box-shadow: 0 0 0 0px #6f3faa}
 .ft-chatbox-skin1 .ft-csky i, .ft-chatbox-skin3 .ft-csky i{box-shadow: 0 0 0 0px #00a9f0}
+.ft-chatbox-skin1 .ft-ctik i, .ft-chatbox-skin3 .ft-ctik i{box-shadow: 0 0 0 0px #222222}
 .ft-chatbox-skin1 .ft-cmai i, .ft-chatbox-skin3 .ft-cmai i{box-shadow: 0 0 0 0px #2196F3}
 .ft-chatbox-skin1 .ft-cmap i, .ft-chatbox-skin3 .ft-cmap i{box-shadow: 0 0 0 0px #8a56cd}
 .ft-chatbox-skin1 .ft-ccus i, .ft-chatbox-skin3 .ft-ccus i{box-shadow: 0 0 0 0px #555555}
@@ -352,6 +374,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 .ft-chatbox-skin4 .ft-cwha svg path, .ft-chatbox-skin5 .ft-cwha svg path{fill:#29A71A !important}
 .ft-chatbox-skin4 .ft-cvib svg path, .ft-chatbox-skin5 .ft-cvib svg path{fill:#6f3faa !important}
 .ft-chatbox-skin4 .ft-csky svg path, .ft-chatbox-skin5 .ft-csky svg path{fill:#00a9f0 !important}
+.ft-chatbox-skin4 .ft-ctik svg path, .ft-chatbox-skin5 .ft-ctik svg path{fill:#222222 !important}
 .ft-chatbox-skin4 .ft-cmai svg path, .ft-chatbox-skin5 .ft-cmai svg path{fill:#2196F3 !important}
 .ft-chatbox-skin4 .ft-cmap svg path, .ft-chatbox-skin5 .ft-cmap svg path{fill:#8a56cd !important}
 .ft-chatbox-skin4 .ft-ccus svg path, .ft-chatbox-skin5 .ft-ccus svg path{fill:#555555 !important}
@@ -364,6 +387,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 .ft-chatbox-skin4 .ft-cwha svg{border:2px solid #29A71A}
 .ft-chatbox-skin4 .ft-cvib svg{border:2px solid #6f3faa}
 .ft-chatbox-skin4 .ft-csky svg{border:2px solid #00a9f0}
+.ft-chatbox-skin4 .ft-ctik svg{border:2px solid #222222}
 .ft-chatbox-skin4 .ft-cmai svg{border:2px solid #2196F3}
 .ft-chatbox-skin4 .ft-cmap svg{border:2px solid #8a56cd}
 .ft-chatbox-skin4 .ft-ccus svg{border:2px solid #555555}
@@ -419,7 +443,6 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 /* NAVI */
 :root{
 	--navicolor: #333;
-	--backchatbg:#fff;
 	--bordcolor: #ff4444;
 	--backcolor:#fff;
 	--backchatcolor:#ffffffd6;
@@ -451,7 +474,10 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 	color:var(--navicolor);
 }
 .ft-navi a{
-	color:var(--navicolor);
+	color:var(--navicolor) !important;
+}
+.ft-navi svg path{
+	fill:var(--navicolor) !important;
 }
 .ft-navi-chaton a{
 	color:var(--textchatcolor);
@@ -461,6 +487,9 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 }
 .ft-navi-cen-but a {color:var(--bordcolor);cursor: pointer;}
 .ft-navi-cen-but a .ft-navi-cen-span{color:#fff;}
+.ft-navi-cen-but svg path{
+	fill:#fff !important;
+}
 .ft-navi div {
     text-align: center;
 	position: relative;
@@ -486,7 +515,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 }
 .ft-navi-cen-but {
     position: absolute !important;
-    bottom: -15px;
+    bottom: -20px;
     left: 50%;
     transform: translate(-50%,0);
     width:100%;
@@ -497,7 +526,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
     max-width:25px;
 }
 .ft-navi-cen svg {
-    background: var(--backchatbg);
+    background: var(--bordcolor);
     border: 1px solid #0000002b;
     padding: 10px;
     border-radius: 100%;
@@ -575,9 +604,6 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
     border-top: 4px solid var(--bordcolor);
     padding-top: 10px;
     margin-top: -10px;
-}
-.ft-navi-cen1 a{
-	color:var(--bordcolor);
 }
 /* navi skin 3 */
 .navi-skin3{
@@ -657,3 +683,5 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 	.chaton-mobile{display:none}
 	.ft-boxnavi{display:block;}
 }
+
+

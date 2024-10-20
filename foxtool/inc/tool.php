@@ -277,7 +277,7 @@ function foxtool_tiny_description($tag){
             <th scope="row" valign="top"><label for="description"></label></th>
             <td>
                 <?php
-                    $settings = array('wpautop' => true, 'media_buttons' => true, 'quicktags' => true, 'textarea_rows' => '15', 'textarea_name' => 'description' );
+                    $settings = array('wpautop' => true, 'media_buttons' => true, 'quicktags' => true, 'textarea_rows' => '10', 'textarea_name' => 'description' );
                     wp_editor(html_entity_decode($tag->description), 'foxtool_tiny_description', $settings);
                 ?>
                 <br />

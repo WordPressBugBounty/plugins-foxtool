@@ -11,7 +11,11 @@ function foxtool_toc_options_page() {
 	<div class="ft-wrap2">
 	  <div class="ft-box">
 		<div class="ft-menu">
-			<div class="ft-logo"><?php foxtool_logo(); ?></div>
+			<div class="ft-logo ft-logoquay">
+			<a class="ft-logoquaya" href="https://foxplugin.com" target="_blank">
+			<span><?php foxtool_logo(); ?></span>
+			</a>
+			</div>
 			<button class="sotab sotab-select" onclick="fttab(event, 'tab1')"><i class="fa-regular fa-list"></i> <?php _e('TOC', 'foxtool'); ?></button>
 		</div>
 
@@ -155,6 +159,18 @@ function foxtool_toc_options_page() {
 				<span class="slider"></span></label>
 				<label class="ft-label-right"><?php _e('Disable numbers in front of tags', 'foxtool'); ?></label>
 				</p>
+				<p>
+				<label class="nut-switch">
+				<input type="checkbox" name="foxtool_toc_settings[tit-c5]" value="1" <?php if ( isset($foxtool_toc_options['tit-c5']) && 1 == $foxtool_toc_options['tit-c5'] ) echo 'checked="checked"'; ?> />
+				<span class="slider"></span></label>
+				<label class="ft-label-right"><?php _e('List is hidden by default', 'foxtool'); ?></label>
+				</p>
+				<p>
+				<label class="nut-switch">
+				<input type="checkbox" name="foxtool_toc_settings[tit-c6]" value="1" <?php if ( isset($foxtool_toc_options['tit-c6']) && 1 == $foxtool_toc_options['tit-c6'] ) echo 'checked="checked"'; ?> />
+				<span class="slider"></span></label>
+				<label class="ft-label-right"><?php _e('Hide minimized list', 'foxtool'); ?></label>
+				</p>
 				<h4><?php _e('Customize TOC display position', 'foxtool') ?></h4>
 				<p>
 				<label class="nut-switch">
@@ -239,7 +255,7 @@ function foxtool_toc_options_page() {
 				<h4><?php _e('Customize icons and positions', 'foxtool') ?></h4>
 				<p>
 				<?php $styles = array('Icon1', 'Icon2', 'Icon3', 'Icon4', 'Icon5', 'Icon6'); ?>
-				<select style="width:120px;" name="foxtool_toc_settings[main-ico]"> 
+				<select name="foxtool_toc_settings[main-ico]"> 
 				<?php foreach($styles as $style) { ?> 
 				<?php if(isset($foxtool_toc_options['main-ico']) && $foxtool_toc_options['main-ico'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
 				<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
@@ -249,7 +265,7 @@ function foxtool_toc_options_page() {
 				</p>
 				<p>
 				<?php $styles = array('Right', 'Left'); ?>
-				<select style="width:120px;" name="foxtool_toc_settings[main-her1]"> 
+				<select name="foxtool_toc_settings[main-her1]"> 
 				<?php foreach($styles as $style) { ?> 
 				<?php if(isset($foxtool_toc_options['main-her1']) && $foxtool_toc_options['main-her1'] == $style) { $selected = 'selected="selected"'; } else { $selected = ''; } ?>
 				<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
@@ -267,11 +283,11 @@ function foxtool_toc_options_page() {
 				</p>	
 				
 			</div>
+			</div>
 			<div class="ft-submit">
 				<button type="submit"><i class="fa-regular fa-floppy-disk"></i> <?php _e('SAVE CONTENT', 'foxtool'); ?></button>
 			</div>
 				<button id="ft-save-fast" type="submit"><i class="fa-regular fa-floppy-disk"></i></button>
-			</div>
 			</form>
 		</div>
 	  </div>
@@ -312,4 +328,9 @@ function foxtool_toc_register_settings() {
 	register_setting('foxtool_toc_settings_group', 'foxtool_toc_settings');
 }
 add_action('admin_init', 'foxtool_toc_register_settings');
+// clear cache
+function foxtool_toc_settings_cache($old_value, $value) {
+    wp_cache_delete('foxtool_toc_settings', 'options');
+}
+add_action('update_option_foxtool_toc_settings', 'foxtool_toc_settings_cache', 10, 2);
 

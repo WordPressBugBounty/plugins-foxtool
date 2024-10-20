@@ -46,6 +46,7 @@ global $foxtool_options; ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
 	<?php } ?> 
 	</select>
+	<label class="ft-right-text"><?php _e('Role', 'foxtool'); ?></label>
 	</p>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('If you find the Admin Bar distracting every time you view the website, you can turn it off (there is an option for you to turn off all or only turn off for users)', 'foxtool'); ?></p>
 	

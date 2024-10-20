@@ -153,7 +153,7 @@ add_action('publish_post', 'foxtool_auto_featured_image');
 }
 # chuc nang nhan ban bai viet va trang
 if(isset($foxtool_options['post-dup1'])){
-function duplicate_post() {
+function foxtool_duplicate_post() {
     $nonce = sanitize_text_field($_REQUEST['nonce'] ?? '');
     $post_id = intval($_REQUEST['post'] ?? 0);
     if (empty($nonce) || empty($post_id)) {
@@ -173,10 +173,11 @@ function duplicate_post() {
         wp_die(__('Modifying settings is not allowed', 'foxtool'));
     }
 }
-add_action('admin_action_duplicate_as_draft', 'duplicate_post');
+add_action('admin_action_duplicate_as_draft', 'foxtool_duplicate_post');
 // Tạo liên kết nhân bản
 function foxtool_quick_duplicate_post_button($actions, $post) {
-    if ($post->post_type == 'post' || $post->post_type == 'page') {
+	global $foxtool_options;
+    if (isset($foxtool_options['post-dup-posttype']) && in_array($post->post_type, $foxtool_options['post-dup-posttype'])) {
         $actions['duplicate'] = sprintf(
             '<a href="%s" title="%s" rel="permalink">%s</a>',
             esc_url(wp_nonce_url(admin_url('admin.php?action=duplicate_post&post=' . $post->ID), 'duplicate-post_' . $post->ID)),
@@ -230,12 +231,14 @@ function foxtool_quick_duplicate_post_action() {
                     }
                 }
             }
-            if ($post->post_type == 'post') {
-                wp_redirect(esc_url_raw(admin_url('post.php?action=edit')));
-            } else {
-				wp_redirect(esc_url_raw(admin_url('edit.php?post_type=page')));
-            }
-            exit;
+            $redirect_url = wp_get_referer(); // Lấy URL referer
+			if ($redirect_url) {
+				wp_redirect(esc_url_raw($redirect_url)); // Quay lại trang referer
+			} else {
+				// Nếu không tìm thấy referer, quay lại trang quản lý bài viết
+				wp_redirect(esc_url_raw(admin_url('edit.php?post_type=' . $post->post_type)));
+			}
+			exit;
         }
     }
 }
@@ -361,32 +364,23 @@ add_action('add_attachment', 'foxtool_add_description_to_media');
 }
 # thêm nofollow và _blank cho đường dẫn bên ngoài ở bài viết
 if(isset($foxtool_options['post-out1'])){
-function foxtool_target_blank_to_nofollow_and_external($text) {
-    preg_match_all('/<a[^>]+>/i', $text, $matches);
-    foreach ($matches[0] as $link) {
-        if (strpos($link, 'href=') !== false) {
-            preg_match('/href=("|\')([^"\']+)("|\')/i', $link, $hrefMatches);
-            $url = isset($hrefMatches[2]) ? $hrefMatches[2] : '';
-            if (filter_var($url, FILTER_VALIDATE_URL) && strpos($url, home_url()) === false) {
-                preg_match_all('/([a-zA-Z\-]+)="([^"]*)"/', $link, $attributeMatches, PREG_SET_ORDER);
-                $attributes = array();
-                foreach ($attributeMatches as $attributeMatch) {
-                    $attributes[$attributeMatch[1]] = $attributeMatch[0];
-                }
-                $attributes['rel'] = 'rel="nofollow noopener sponsored"';
-                $attributes['target'] = 'target="_blank"';
-                $modified_link = '<a ' . implode(' ', $attributes) . '>';
-                $text = str_replace($link, $modified_link, $text);
-            }
-        }
-    }
-    return $text;
+function foxtool_target_blank_to_nofollow_and_external() {
+    echo '<span id="foxglobal"></span>';
 }
-add_filter('the_content', 'foxtool_target_blank_to_nofollow_and_external', 13);
+add_action('wp_footer', 'foxtool_target_blank_to_nofollow_and_external');
 }
 # su dung shortcode title
 if(isset($foxtool_options['post-other1'])){
-    add_filter( 'the_title', 'do_shortcode' );
+	add_filter( 'the_title', 'do_shortcode' );
+	add_filter( 'single_post_title', 'do_shortcode' );
+	add_filter( 'wpseo_title', 'do_shortcode' );
+	add_filter( 'wpseo_metadesc', 'do_shortcode' );
+	add_filter( 'wpseo_opengraph_title', 'do_shortcode' );
+	add_filter( 'wpseo_opengraph_desc', 'do_shortcode' );
+	add_filter( 'wpseo_opengraph_site_name', 'do_shortcode' );
+	add_filter( 'wpseo_twitter_title', 'do_shortcode' );
+	add_filter( 'wpseo_twitter_description', 'do_shortcode' );
+	add_filter( 'the_excerpt', 'do_shortcode' );
 }
 # hien thị bai viet vua chinh sua dau tien
 if(isset($foxtool_options['post-other2'])){

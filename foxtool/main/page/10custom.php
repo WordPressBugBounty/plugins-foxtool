@@ -50,6 +50,7 @@ global $foxtool_options; ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
 	<?php } ?> 
 	</select>
+	<label class="ft-right-text"><?php _e('Background', 'foxtool'); ?></label>
 	</p>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('None: default not selected, Auto: background image automatically changes each time the page is loaded, Color: change the color you want, Upload: upload the background image you want', 'foxtool'); ?></p>
 	
@@ -215,7 +216,20 @@ global $foxtool_options; ?>
 	<p>
 	<input class="ft-input-big" placeholder="<?php _e('Widget title', 'foxtool') ?>" name="foxtool_settings[custom-wid11]" type="text" value="<?php if(!empty($foxtool_options['custom-wid11'])){echo sanitize_text_field($foxtool_options['custom-wid11']);} ?>"/>
 	</p>
-	<p>
-	<textarea style="height:150px;" class="ft-textarea" name="foxtool_settings[custom-wid12]" placeholder="<?php _e('Enter widget content here', 'foxtool'); ?>"><?php if(!empty($foxtool_options['custom-wid12'])){echo esc_textarea($foxtool_options['custom-wid12']);} ?></textarea>
-	</p>
+	<div class="ft-classic">
+	<?php
+	$custom_wid12 = !empty($foxtool_options['custom-wid12']) ? wp_kses_post($foxtool_options['custom-wid12']) : '';
+	ob_start();
+	wp_editor(
+		$custom_wid12,
+		'userpostcontent',
+		array(
+			'textarea_name' => 'foxtool_settings[custom-wid12]',
+			'media_buttons' => false,
+		)
+	);
+	$foxtool_widget = ob_get_clean();
+	echo $foxtool_widget;
+	?>
+	</div>
 </div>	

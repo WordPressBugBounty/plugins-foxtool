@@ -1,11 +1,13 @@
 .cm-s-cobalt {
-	font-size: 16px;
-	line-height: 1.5em;
-	font-family: inconsolata, monospace;
-	letter-spacing: 0.3px;
-	word-spacing: 1px;
-	background: #2c3338;
-	color: #FFFFFF;
+	font-size: 16px !important;
+	line-height: 1.5em !important;
+	font-family: inconsolata, monospace !important;
+	letter-spacing: 0.3px !important;
+	word-spacing: 1px !important;
+	background: #2c3338 !important;
+	color: #FFFFFF !important;
+	border:none !important;
+	border-radius:7px !important;
 }
 .cm-s-cobalt .CodeMirror-lines {
 	padding: 8px 0;

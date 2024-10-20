@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	const tocTitHi = document.querySelector(".ft-toc-tit-hi");
     const articleContent = document.getElementById("ft-toc");
     const tocClose = document.querySelector(".ft-toc-close");
-    const tocNeo = document.getElementById("ft-toc-neo");
     const tocPlaceholder = document.querySelector(".ft-toc-placeholder");
-    const headingsSelector = tocNeo.getAttribute("data-h");
-    const headingsnumber = tocNeo.getAttribute("data-on");
+    const headingsSelector = tocPlaceholder.getAttribute("data-h");
+    const headingsnumber = tocPlaceholder.getAttribute("data-on");
+	const headingsicon = tocPlaceholder.getAttribute("data-ico");
     if (!headingsSelector) return;
     const headings = articleContent.querySelectorAll(headingsSelector);
     if (headings.length === 0) {
@@ -140,47 +140,57 @@ document.addEventListener("DOMContentLoaded", function () {
         const tocRect = articleContent.getBoundingClientRect();
         tocMain.style.display = tocRect.bottom > 0 ? 'block' : 'none';
         tocClose.style.display = tocRect.bottom > 0 ? 'flex' : 'none';
-        const neoRect = tocNeo.getBoundingClientRect();
-        if (neoRect.top < 0) {
-            tocMain.classList.add("ft-toc-main-vuot");
-        } else {
-            tocMain.classList.remove("ft-toc-main-vuot");
-            tocClose.style.display = 'none';
-            updateTocPlaceholder();
-        }
+		if (tocPlaceholder) {
+			const nftoc = tocPlaceholder.offsetHeight;
+			const oftoc = tocPlaceholder.getBoundingClientRect().top + window.pageYOffset;
+			if ((window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop) > oftoc + nftoc) {
+					tocPlaceholder.style.height = nftoc + "px";
+					if (!headingsicon || headingsicon !== "off") {
+						tocMain.classList.add("ft-toc-main-vuot");
+					}
+			} else {
+					tocPlaceholder.style.height = "auto";
+					if (!headingsicon || headingsicon !== "off") {
+						tocMain.classList.remove("ft-toc-main-vuot");
+						tocClose.style.display = 'none';
+			        }
+			}
+		}
     }
-
-    function updateTocPlaceholder() {
-        if (tocMain && tocPlaceholder) {
-            tocPlaceholder.style.height = `${tocMain.offsetHeight}px`;
-        }
-    }
-
     highlightCurrentHeading();
-    updateTocPlaceholder();
     document.addEventListener("scroll", function () {
         highlightCurrentHeading();
     });
 
-    window.addEventListener("resize", function () {
-        highlightCurrentHeading();
-        updateTocPlaceholder();
-    });
-	function toclisthi() {
-        if (tocList.style.display === "none") {
-            tocList.style.display = "block";
-			tocTitHi.classList.remove("ft-toc-tit-hi-active");
-            tocTitHi.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1024 1024"><path fill="currentColor" d="M104.704 685.248a64 64 0 0 0 90.496 0l316.8-316.8l316.8 316.8a64 64 0 0 0 90.496-90.496L557.248 232.704a64 64 0 0 0-90.496 0L104.704 594.752a64 64 0 0 0 0 90.496"/></svg>';
-        } else {
-            tocList.style.display = "none";
+	let foxiconan = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1024 1024"><path fill="currentColor" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8l316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496"/></svg>';
+	let foxiconhien = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1024 1024"><path fill="currentColor" d="M104.704 685.248a64 64 0 0 0 90.496 0l316.8-316.8l316.8 316.8a64 64 0 0 0 90.496-90.496L557.248 232.704a64 64 0 0 0-90.496 0L104.704 594.752a64 64 0 0 0 0 90.496"/></svg>';
+	function initTocIcon() {
+		const isTocListHidden = getComputedStyle(tocList).display === "none"; 
+		if (isTocListHidden) {
 			tocTitHi.classList.add("ft-toc-tit-hi-active");
-            tocTitHi.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 1024 1024"><path fill="currentColor" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8l316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496"/></svg>';
-        }
-    }
-    if (tocTitHi) {
-        tocTitHi.addEventListener("click", function () {
+			tocTitHi.innerHTML = foxiconan; 
+		} else {
+			tocTitHi.classList.remove("ft-toc-tit-hi-active");
+			tocTitHi.innerHTML = foxiconhien; 
+		}
+	}
+	function toclisthi() {
+		if (getComputedStyle(tocList).display === "none") {
+			tocList.style.display = "block"; 
+			tocTitHi.classList.remove("ft-toc-tit-hi-active");
+			tocTitHi.innerHTML = foxiconhien; 
+		} else {
+			tocList.style.display = "none"; 
+			tocTitHi.classList.add("ft-toc-tit-hi-active");
+			tocTitHi.innerHTML = foxiconan; 
+		}
+	}
+	window.onload = function() {
+		initTocIcon();
+	};
+	if (tocTitHi) {
+		tocTitHi.addEventListener("click", function () {
 			toclisthi();
-            updateTocPlaceholder();
-        });
-    }
+		});
+	}
 });

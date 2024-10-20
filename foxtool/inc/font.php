@@ -83,9 +83,11 @@ function foxtool_overwrite_font_style($upload_dir){
 	@font-face {
 	    font-family: '<?php echo esc_html($fontData['font_name']) ?>';
 	    src: <?php if (file_exists($fontData['font_url'])) {?>url('<?php echo wp_make_link_relative($fontData['font_url']) ?>'),<?php }?>
-	    url('<?php echo wp_make_link_relative($fontData['font_url']) ?>');
+	    url('<?php echo wp_make_link_relative($fontData['font_url']) ?>') format("truetype");
 	}
-	.font-demo.<?php echo esc_html($fontData['font_name']) ?>{font-family: '<?php echo esc_html($fontData['font_name']) ?>' !important;}
+	.font-demo.<?php echo esc_html($fontData['font_name']) ?>{
+		font-family: '<?php echo esc_html($fontData['font_name']) ?>', sans-serif  !important;
+	}
 	<?php endforeach;
     endif;
     $content = ob_get_contents();
@@ -203,3 +205,36 @@ function foxtool_font_sethead() {
 	}
 }
 add_action( 'wp_head', 'foxtool_font_sethead' );
+// add font to editor
+function foxtool_custom_fonts($init) {
+    $fontsData = foxtool_get_uploaded_font_data();
+    $custom_fonts = '';
+    if (!empty($fontsData)) {
+        foreach ($fontsData as $fontData) {
+            $custom_fonts .= $fontData['font_name'] . '=' . $fontData['font_name'] . ', sans-serif;';
+        }
+    }
+    $theme_advanced_fonts = "Andale Mono=andale mono,times;" .
+                            "Arial=arial,helvetica,sans-serif;" .
+                            "Arial Black=arial black,avant garde;" .
+                            "Book Antiqua=book antiqua,palatino;" .
+                            "Comic Sans MS=comic sans ms,sans-serif;" .
+                            "Courier New=courier new,courier;" .
+                            "Georgia=georgia,palatino;" .
+                            "Helvetica=helvetica;" .
+                            "Impact=impact,chicago;" .
+                            "Symbol=symbol;" .
+                            "Tahoma=tahoma,arial,helvetica,sans-serif;" .
+                            "Terminal=terminal,monaco;" .
+                            "Times New Roman=times new roman,times;" .
+                            "Trebuchet MS=trebuchet ms,geneva;" .
+                            "Verdana=verdana,geneva;" .
+                            "Webdings=webdings;" .
+                            "Wingdings=wingdings,zapf dingbats";
+    if (!empty($custom_fonts)) {
+        $theme_advanced_fonts .= ';' . $custom_fonts;
+    }
+    $init['font_formats'] = $theme_advanced_fonts;
+    return $init;
+}
+add_filter('tiny_mce_before_init', 'foxtool_custom_fonts');

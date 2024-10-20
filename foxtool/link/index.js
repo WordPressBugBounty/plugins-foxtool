@@ -17,6 +17,23 @@ function ftnone(e, div_name) {
     e.cancelBubble = true;
     return false;
 }
+// link ngoai
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById("foxglobal")) {
+        const allLinks = document.querySelectorAll("a");
+        allLinks.forEach(link => {
+            if (link.hostname && link.hostname !== location.hostname) {
+                if (!link.hasAttribute("target")) {
+                    link.setAttribute("target", "_blank");
+                }
+                if (!link.getAttribute("rel") || !link.getAttribute("rel").includes("nofollow")) {
+                    link.setAttribute("rel", (link.getAttribute("rel") || "") + " nofollow");
+                }
+            }
+        });
+    }
+});
+
 
 
 

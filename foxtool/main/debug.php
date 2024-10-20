@@ -11,7 +11,11 @@ function foxtool_debug_options_page() {
 	<div class="ft-wrap2">
 	  <div class="ft-box">
 		<div class="ft-menu">
-			<div class="ft-logo"><?php foxtool_logo(); ?></div>
+			<div class="ft-logo ft-logoquay">
+			<a class="ft-logoquaya" href="https://foxplugin.com" target="_blank">
+			<span><?php foxtool_logo(); ?></span>
+			</a>
+			</div>
 			<button class="sotab sotab-select" onclick="fttab(event, 'tab1')"><i class="fa-regular fa-square-terminal"></i> <?php _e('DEBUG', 'foxtool'); ?></button>
 		</div>
 
@@ -151,6 +155,11 @@ function foxtool_debug_register_settings() {
 	register_setting('foxtool_debug_settings_group', 'foxtool_debug_settings');
 }
 add_action('admin_init', 'foxtool_debug_register_settings');
+// clear cache
+function foxtool_debug_settings_cache($old_value, $value) {
+    wp_cache_delete('foxtool_debug_settings', 'options');
+}
+add_action('update_option_foxtool_debug_settings', 'foxtool_debug_settings_cache', 10, 2);
 
 
 

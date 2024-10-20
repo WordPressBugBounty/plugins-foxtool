@@ -1,11 +1,15 @@
-<?php if ( ! defined( 'ABSPATH' ) ) { exit; } ?>
+<?php if ( ! defined( 'ABSPATH' ) ) { exit; } 
+global $foxtool_redirects_options;
+$title = !empty($foxtool_redirects_options['redi31']) ? $foxtool_redirects_options['redi31'] : __('MAINTENANCE MODE', 'foxtool');
+$content = !empty($foxtool_redirects_options['redi32']) ? $foxtool_redirects_options['redi32'] : __('We apologize, the website is currently undergoing maintenance. Please wait for a moment', 'foxtool');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="<?php _e('We apologize, the website is currently undergoing maintenance', 'foxtool'); ?>">
-    <title>503 - <?php _e('Maintenance', 'foxtool'); ?></title>
+	<meta name="description" content="<?php echo $content; ?>">
+    <title>503 - <?php echo $title; ?></title>
     <style>
 		@import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;1,100;1,200;1,300;1,400&display=swap');
         body {
@@ -63,8 +67,8 @@
                             <h1 class="text-center">503</h1>
                         </div>
                         <div class="contant_box_503">
-                            <h2 class="h2"><?php _e('MAINTENANCE MODE', 'foxtool'); ?></h2>
-                            <p><?php _e('We apologize, the website is currently undergoing maintenance. Please wait for a moment', 'foxtool'); ?>!</p>
+                            <h2 class="h2"><?php echo $title; ?></h2>
+                            <p><?php echo $content; ?></p>
                         </div>
                     </div>
                 </div>

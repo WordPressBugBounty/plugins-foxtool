@@ -13,6 +13,25 @@ if (chatmojs) {
         chatlastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
     });
 }
+// svg to chaton
+const svgElements = document.querySelectorAll('.ft-chaton svg');
+const chatonaButton = document.getElementById('chatona');
+let currentIndex = 0;
+if (chatonaButton) {
+	function foxupdateSVG() {
+		chatonaButton.innerHTML = '';
+		if (svgElements.length > 0) {
+			const newSVG = svgElements[currentIndex].cloneNode(true);
+			newSVG.classList.add('svg-enter');
+			chatonaButton.appendChild(newSVG);
+			setTimeout(() => {
+				newSVG.classList.remove('svg-enter');
+			}, 90);
+		}
+		currentIndex = (currentIndex + 1) % svgElements.length;
+	}
+	setInterval(foxupdateSVG, 800);
+}
 // navi
 let navilastScrollTop = 0;
 const navimojs = document.getElementById('navi-mojs');

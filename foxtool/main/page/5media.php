@@ -9,12 +9,6 @@ global $foxtool_options; ?>
 <label class="ft-on-right"><?php _e('ON/OFF', 'foxtool'); ?></label>
 </div>
 <div id="play5" class="ft-card toggle-div">
-  <h3><i class="fa-regular fa-photo-film-music"></i> <?php _e('Automatically name uploaded libraries', 'foxtool') ?></h3>
-	<label class="nut-switch">
-	<input type="checkbox" name="foxtool_settings[media-title1]" value="1" <?php if ( isset($foxtool_options['media-title1']) && 1 == $foxtool_options['media-title1'] ) echo 'checked="checked"'; ?> />
-	<span class="slider"></span></label>
-	<label class="ft-label-right"><?php _e('Automatic name', 'foxtool'); ?></label>
-	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('The name will be set with the domain name of the website and 10 random characters', 'foxtool'); ?></p>
   <h3><i class="fa-regular fa-crop"></i> <?php _e('Image crop configuration', 'foxtool') ?></h3>
 	<!-- upload hinh anh 1 -->
 	<label class="nut-switch">
@@ -40,44 +34,17 @@ global $foxtool_options; ?>
 			<label class="ft-label-right"><?php echo __('Stop cropping', 'foxtool') .' '. $size .' (W: '. $width .')'; ?></label>
 		</p>
 	<?php } ?>
-	<div class="ft-card-note ft-del-crop"> 
-	<?php
-	foreach ($image_sizes as $i => $size) {
-		$width = isset($_wp_additional_image_sizes[$size]['width']) ? $_wp_additional_image_sizes[$size]['width'] : get_option($size.'_size_w');
-		?>
-		<p>
-			<a href="javascript:void(0)" id="cropdel-<?php echo $size; ?>"><i class="fa-regular fa-trash"></i> <?php echo $size .' (W: '. $width .')'; ?></a>
-		</p>
-	<?php } ?>
-	</div>
-	<div id="delete-size-end"></div>
-	<script>
-    jQuery(document).ready(function($) {
-			$('a[id^="cropdel-"]').on('click', function(e) {
-				e.preventDefault();
-				var size = $(this).attr('id').replace('cropdel-', '');
-				var foxtoolInput = prompt('<?php _e('Enter from foxtool to confirm deletion:', 'foxtool') ?>');
-				if (foxtoolInput === 'foxtool') {
-					var data = {
-						'action': 'foxtool_delete_images_by_size',
-						'size': size,
-						'security': '<?php echo wp_create_nonce('foxtool_delete_crop_nonce'); ?>',
-					};
-					$.ajax({
-						type: 'POST',
-						url: '<?php echo admin_url('admin-ajax.php');?>',
-						data: data,
-						success: function(response) {
-							$('#delete-size-end').html('<span>'+ response.data + '</span>');
-						}
-					});
-				} else {
-					alert('<?php _e('Entering incorrect content', 'foxtool') ?>');
-				}
-			});
-		});
-	</script>
-	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Exercise caution when using this feature, as your interface may require various sizes to display properly. If youre a web designer, youll understand the need for a variety of sizes to be utilized', 'foxtool'); ?></p>
+   <h3><i class="fa-regular fa-photo-film-music"></i> <?php _e('Advanced photo upload', 'foxtool') ?></h3>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[media-title1]" value="1" <?php if ( isset($foxtool_options['media-title1']) && 1 == $foxtool_options['media-title1'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Automatic name', 'foxtool'); ?></label>
+	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('The file name will be your domain name', 'foxtool'); ?></p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[media-png-8]" value="1" <?php if ( isset($foxtool_options['media-png-8']) && 1 == $foxtool_options['media-png-8'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Ignore 8-bit png', 'foxtool'); ?></label>
+	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('8-bit PNG images are not supported by the GD library, and this format already has perfect compression and does not need further processing', 'foxtool'); ?></p>		
   <h3><i class="fa-regular fa-upload"></i> <?php _e('Configure image upload function', 'foxtool') ?></h3>
 	<!-- upload hinh anh 2 -->
 	<label class="nut-switch">
@@ -105,7 +72,6 @@ global $foxtool_options; ?>
 	<span class="slider"></span></label>
 	<label class="ft-label-right"><?php _e('Allow uploading JFIF files', 'foxtool'); ?></label>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Enable this feature if you want JFIF format images to be uploaded to the media. The uploaded images will be converted to JPG or WEBP format according to the configuration', 'foxtool'); ?></p>
-	
   <h3><i class="fa-regular fa-file-zipper"></i> <?php _e('Compress JPG images upon upload', 'foxtool') ?></h3>
 	<!-- upload hinh anh 1 -->
 	<label class="nut-switch">
@@ -178,13 +144,81 @@ global $foxtool_options; ?>
 	
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Limits the maximum width and height of JPG, PNG, WEBP images upon upload. You can leave it blank if you want to keep the original size', 'foxtool'); ?></p>	
 	
+  <h3><i class="fa-regular fa-frame"></i> <?php _e('Automatically add a frame when uploading an image', 'foxtool') ?></h3>
+	<!-- them logo vao hinh anh -->
+	<p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[media-cutop1]" value="1" <?php if ( isset($foxtool_options['media-cutop1']) && 1 == $foxtool_options['media-cutop1'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Enable the picture frame', 'foxtool'); ?></label>
+	</p>
+	<p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[media-cutop-hook]" value="1" <?php if ( isset($foxtool_options['media-cutop-hook']) && 1 == $foxtool_options['media-cutop-hook'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Process cropped images', 'foxtool'); ?></label>
+	</p>
+	<!-- khung -->
+	<div id="ft-imgstyle2" class="ft-imgstyle">
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/1.png'); ?>" data-value="1" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '1') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/2.png'); ?>" data-value="2" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '2') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/3.png'); ?>" data-value="3" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '3') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/4.png'); ?>" data-value="4" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '4') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/5.png'); ?>" data-value="5" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '5') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/6.png'); ?>" data-value="6" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '6') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/7.png'); ?>" data-value="7" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '7') echo 'selected'; ?>" />
+		<img src="<?php echo esc_url(FOXTOOL_URL .'img/khung/8.png'); ?>" data-value="8" class="<?php if(isset($foxtool_options['media-cutop11']) && $foxtool_options['media-cutop11'] == '8') echo 'selected'; ?>" />
+	</div>
+	<input type="hidden" name="foxtool_settings[media-cutop11]" id="cutop11" value="<?php if(!empty($foxtool_options['media-cutop11'])){echo sanitize_text_field($foxtool_options['media-cutop11']);} else {echo sanitize_text_field('1');} ?>" />
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			var imgStyles = document.querySelectorAll('#ft-imgstyle2 img');
+			imgStyles.forEach(function(img) {
+				img.addEventListener('click', function() {
+					var selectedStyle = this.getAttribute('data-value');
+					document.getElementById('cutop11').value = selectedStyle;
+					imgStyles.forEach(function(img) {
+						img.classList.remove('selected');
+					});
+					this.classList.add('selected');
+				});
+			});
+		});
+	</script>
+	<p style="display:flex;">
+	<input id="ft-add6" class="ft-input-big" name="foxtool_settings[media-cutop12]" type="text" value="<?php if(!empty($foxtool_options['media-cutop12'])){echo sanitize_text_field($foxtool_options['media-cutop12']);} ?>" placeholder="<?php _e('Add picture frame link here', 'foxtool'); ?>" />
+	<button class="ft-selec" data-input-id="ft-add6"><?php _e('Select image', 'foxtool'); ?></button>
+	</p>
+	<!-- lat anh -->
+	<p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[media-cutop13]" value="1" <?php if ( isset($foxtool_options['media-cutop13']) && 1 == $foxtool_options['media-cutop13'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Flip photo', 'foxtool'); ?></label>
+	</p>
+	<p style="display:flex;align-items:center;">
+	<input class="ft-input-color" name="foxtool_settings[media-cutop-c1]" type="text" data-coloris value="<?php if(!empty($foxtool_options['media-cutop-c1'])){echo $foxtool_options['media-cutop-c1'];} ?>"/>
+	<label class="ft-right-text"><?php _e('Overlay color', 'foxtool'); ?></label>
+	</p>
+	<p class="ft-keo">
+	<input type="range" name="foxtool_settings[media-cutop14]" min="10" max="100" value="<?php if(!empty($foxtool_options['media-cutop14'])){echo sanitize_text_field($foxtool_options['media-cutop14']);} else { echo sanitize_text_field('100');} ?>" class="ftslide" data-index="17">
+	<span><?php _e('Transparency level', 'foxtool'); ?> <span id="demo17"></span> %</span>
+	</p>
+	
+	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('The feature adds advanced functions when uploading images, such as adding frames, flipping images... allowing you to automatically customize your images during upload. Picture frame (PNG)', 'foxtool'); ?></p>
+
   <h3><i class="fa-regular fa-diagram-venn"></i> <?php _e('Configure adding a watermark to images upon upload', 'foxtool') ?></h3>
 	<!-- them logo vao hinh anh -->
 	<label class="nut-switch">
 	<input type="checkbox" name="foxtool_settings[media-logo1]" value="1" <?php if ( isset($foxtool_options['media-logo1']) && 1 == $foxtool_options['media-logo1'] ) echo 'checked="checked"'; ?> />
 	<span class="slider"></span></label>
 	<label class="ft-label-right"><?php _e('Add watermark to images upon upload', 'foxtool'); ?></label>
-	
+	<p>
+	<label class="nut-switch">
+	<input type="checkbox" name="foxtool_settings[media-logo-hook]" value="1" <?php if ( isset($foxtool_options['media-logo-hook']) && 1 == $foxtool_options['media-logo-hook'] ) echo 'checked="checked"'; ?> />
+	<span class="slider"></span></label>
+	<label class="ft-label-right"><?php _e('Process cropped images', 'foxtool'); ?></label>
+	</p>
 	<p>
 	<input class="ft-input-big" name="foxtool_settings[media-logo10]" type="text" value="<?php if(!empty($foxtool_options['media-logo10'])){echo sanitize_text_field($foxtool_options['media-logo10']);} ?>" placeholder="<?php _e('Enter content', 'foxtool'); ?>" />
 	</p>
@@ -239,35 +273,4 @@ global $foxtool_options; ?>
 	<span><?php _e('Transparency level', 'foxtool'); ?> <span id="demo15"></span> %</span>
 	</p>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('If you want your uploaded images to be watermarked, please use this function and configure it above. Watermark (PNG, JPG)', 'foxtool'); ?></p>
-   
-   <h3><i class="fa-regular fa-image-slash"></i> <?php _e('Find and delete all 404 images in media', 'foxtool') ?></h3>
-	<div class="ft-del">
-	<a class="delete-media" href="javascript:void(0)" id="delete-media"><i class="fa-regular fa-trash"></i> <?php _e('Delete all 404 images', 'foxtool'); ?></a>
-	<div class="emed" style="display:none"><div class="ft-sload"></div> <?php _e('Please wait', 'foxtool'); ?></div>
-	<div id="del-media"></div>
-	<script>
-	jQuery(document).ready(function($) {
-		$('#delete-media').click(function(event) {
-			var ajax_nonce = '<?php echo wp_create_nonce('foxtool_media_del'); ?>';
-			$('.emed').show();
-			event.preventDefault();
-			$.ajax({
-			url: '<?php echo admin_url('admin-ajax.php');?>',
-			type: 'POST',
-			data: {
-				action: 'foxtool_delete_media',
-				security: ajax_nonce,
-			},
-			success: function(response) {
-				$('#del-media').html('<span><?php _e('Number of images 404 deleted: ', 'foxtool'); ?>'+ response.data.deleted_count +'</span>');
-				$('.emed').hide();
-			},
-			error: function(response) {
-				$('#del-media').html('<span><?php _e('Error! Unable to delete', 'foxtool'); ?></span>');
-			}
-			});
-		});
-	});
-	</script>
-	</div>	
 </div>	

@@ -1,7 +1,7 @@
 <?php 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 global $foxtool_options; ?>
-<h2><?php _e('POST, PAGE', 'foxtool'); ?></h2>
+<h2><?php _e('CONTENT', 'foxtool'); ?></h2>
 <div class="ft-on">
 <label class="nut-fton">
 <input class="toggle-checkbox" id="check6" data-target="play6" type="checkbox" name="foxtool_settings[post]" value="1" <?php if ( isset($foxtool_options['post']) && 1 == $foxtool_options['post'] ) echo 'checked="checked"'; ?> />
@@ -51,13 +51,35 @@ global $foxtool_options; ?>
 	<label class="ft-label-right"><?php _e('The original image size when added to the post', 'foxtool'); ?></label>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Enable this feature if you want the original image size to be selected by default whenever adding images to the post', 'foxtool'); ?></p>
   
-  <h3><i class="fa-regular fa-copy"></i> <?php _e('Duplicate post, page', 'foxtool') ?></h3>
+  <h3><i class="fa-regular fa-copy"></i> <?php _e('Duplicate post, page, custom post type', 'foxtool') ?></h3>
 	<!-- post nhan ban 1 -->
 	<label class="nut-switch">
 	<input type="checkbox" name="foxtool_settings[post-dup1]" value="1" <?php if ( isset($foxtool_options['post-dup1']) && 1 == $foxtool_options['post-dup1'] ) echo 'checked="checked"'; ?> />
 	<span class="slider"></span></label>
 	<label class="ft-label-right"><?php _e('Add duplicate button', 'foxtool'); ?></label>
-	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Enable if you want to add the duplicate post or page feature in the post or page management interface', 'foxtool'); ?></p>
+	<h4><?php _e('Custom posts will be displayed', 'foxtool') ?></h4>
+	<p>
+	<?php
+	$args = array(
+    'public'   => true,
+	);
+	$post_types = get_post_types($args, 'objects'); 
+	foreach ($post_types as $post_type_object) {
+		if ($post_type_object->name == 'attachment' || $post_type_object->name == 'product') {
+			continue;
+		}
+		?>
+		<label class="nut-switch">
+			<input type="checkbox" name="foxtool_settings[post-dup-posttype][]" value="<?php echo $post_type_object->name; ?>" <?php if (isset($foxtool_options['post-dup-posttype']) && in_array($post_type_object->name, $foxtool_options['post-dup-posttype'])) echo 'checked="checked"'; ?> />
+			<span class="slider"></span>
+		</label>
+		<label class="ft-label-right"><?php echo $post_type_object->labels->name; ?></label>
+		</p>
+		<?php
+	}
+	?>
+	</p>
+	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('If you want to enable the feature to duplicate posts, pages, or custom post types, please activate this function', 'foxtool'); ?></p>
 	
   <h3><i class="fa-regular fa-link"></i> <?php _e('Configure category permalink', 'foxtool') ?></h3>
 	<!-- thay doi slug 1 -->
@@ -97,7 +119,7 @@ global $foxtool_options; ?>
 	<input type="checkbox" name="foxtool_settings[post-out1]" value="1" <?php if ( isset($foxtool_options['post-out1']) && 1 == $foxtool_options['post-out1'] ) echo 'checked="checked"'; ?> />
 	<span class="slider"></span></label>
 	<label class="ft-label-right"><?php _e('Add nofollow and _blank for external links', 'foxtool'); ?></label>
-	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('This feature will add nofollow and _blank for external links in posts', 'foxtool'); ?></p>
+	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('This feature will add nofollow and _blank to external links on your site', 'foxtool'); ?></p>
 
   <h3><i class="fa-regular fa-hammer"></i> <?php _e('Additional feature', 'foxtool') ?></h3>
 	<!-- other 1 -->

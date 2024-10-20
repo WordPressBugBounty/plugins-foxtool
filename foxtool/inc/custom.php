@@ -258,12 +258,8 @@ function foxtool_custom_welcome() {
 	}
 	function foxtool_widtit() {
 	global $foxtool_options;	
-	?>
-	<h3><?php _e('Welcome to', 'foxtool'); ?> <?php echo bloginfo( 'name' ); ?></h3>
-	<p><b><?php _e('WEBSITE INFORMATION', 'foxtool') ?></b></p>
-	<?php
 	if (!empty($foxtool_options['custom-wid12'])){
-		echo $foxtool_options['custom-wid12'];
+		echo wpautop($foxtool_options['custom-wid12']);
 	}
 }
 add_action('wp_dashboard_setup', 'foxtool_custom_welcome');

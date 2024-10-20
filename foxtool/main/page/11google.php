@@ -24,7 +24,7 @@ global $foxtool_options; ?>
 	<h4><?php _e('Registration role options', 'foxtool'); ?></h4>
 	<?php
 	$roles = get_editable_roles();
-	echo '<p><select name="foxtool_settings[goo-role1]">';
+	echo '<select name="foxtool_settings[goo-role1]">';
 	echo '<option value="">Default</option>';
 	foreach ($roles as $role_name => $role_info) {
 		if ($role_name != 'administrator' && $role_name != 'editor') {
@@ -32,8 +32,9 @@ global $foxtool_options; ?>
 		echo '<option value="'. $role_name .'" '. $selected .'>'. $role_name .'</option>';
 		}
 	}
-	echo '</select></p>';
+	echo '</select>';
 	?>
+	<label class="ft-right-text"><?php _e('Role', 'foxtool'); ?></label>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('You can customize the role of successful registrants, with the default role being "subscriber"', 'foxtool'); ?></p>
 	<h4><?php _e('Add Google API', 'foxtool'); ?></h4>
 	<p>
@@ -70,6 +71,7 @@ global $foxtool_options; ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
 	<?php } ?> 
 	</select>
+	<label class="ft-right-text"><?php _e('Off / select', 'foxtool'); ?></label>
 	</p>
 	<p>
 	<input class="ft-input-big" placeholder="<?php _e('Site key', 'foxtool'); ?>" name="foxtool_settings[goo-cap11]" type="text" value="<?php if(!empty($foxtool_options['goo-cap11'])){echo sanitize_text_field($foxtool_options['goo-cap11']);} ?>"/>

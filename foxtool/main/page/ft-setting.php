@@ -19,6 +19,7 @@ global $foxtool_options; ?>
     }
     echo '</select>';
 	?>
+	<label class="ft-right-text"><?php _e('Select admin', 'foxtool'); ?></label>
 	</p>
 	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('If you want to hide a specific Administrator account, select the user', 'foxtool'); ?></p>
 	<!-- foxtool 1 -->
@@ -36,6 +37,7 @@ global $foxtool_options; ?>
     }
     echo '</select>';
 	?>
+	<label class="ft-right-text"><?php _e('Select admin', 'foxtool'); ?></label>
 	</p>
 	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('This feature allows you to only display Foxtool to a specific Admin account', 'foxtool'); ?><br>
 	<b><?php _e('Delete settings:', 'foxtool'); ?> <?php echo admin_url('?del=adminfoxtool');?></b>
@@ -69,11 +71,12 @@ global $foxtool_options; ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
 	<?php } ?> 
 	</select>
+	<label class="ft-right-text"><?php _e('Language', 'foxtool'); ?></label>
 	</p>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('If you dont want to automatically switch the language based on WordPress context, please select the language you prefer', 'foxtool'); ?>
 	</p>
   <h3><i class="fa-regular fa-palette"></i> <?php _e('Customize display', 'foxtool') ?></h3>
-	<div class="ft-imgstyle">
+	<div id="ft-imgstyle" class="ft-imgstyle">
 		<img src="<?php echo esc_url(FOXTOOL_URL .'img/style/1.jpg'); ?>" data-value="Default" class="<?php if(isset($foxtool_options['foxtool5']) && $foxtool_options['foxtool5'] == 'Default') echo 'selected'; ?>" />
 		<img src="<?php echo esc_url(FOXTOOL_URL .'img/style/2.jpg'); ?>" data-value="WordPress" class="<?php if(isset($foxtool_options['foxtool5']) && $foxtool_options['foxtool5'] == 'WordPress') echo 'selected'; ?>" />
 		<img src="<?php echo esc_url(FOXTOOL_URL .'img/style/3.jpg'); ?>" data-value="Bright" class="<?php if(isset($foxtool_options['foxtool5']) && $foxtool_options['foxtool5'] == 'Bright') echo 'selected'; ?>" />
@@ -86,7 +89,7 @@ global $foxtool_options; ?>
 	<input type="hidden" name="foxtool_settings[foxtool5]" id="foxtool5" value="<?php if(!empty($foxtool_options['foxtool5'])){echo sanitize_text_field($foxtool_options['foxtool5']);} else {echo sanitize_text_field('Default');} ?>" />
 	<script>
 		document.addEventListener("DOMContentLoaded", function() {
-			var imgStyles = document.querySelectorAll('.ft-imgstyle img');
+			var imgStyles = document.querySelectorAll('#ft-imgstyle img');
 			imgStyles.forEach(function(img) {
 				img.addEventListener('click', function() {
 					var selectedStyle = this.getAttribute('data-value');
@@ -99,7 +102,7 @@ global $foxtool_options; ?>
 			});
 		});
 		jQuery(document).ready(function($) {
-			$('.ft-imgstyle img').click(function() { 
+			$('#ft-imgstyle img').click(function() { 
 				var selectedStyle = $(this).attr('data-value');
 				$('#foxtool5').val(selectedStyle);
 				$('.ft-imgstyle img').removeClass('selected');
@@ -129,6 +132,7 @@ global $foxtool_options; ?>
 	<option value="<?php echo $style; ?>" <?php echo $selected; ?>><?php echo $style; ?></option> 
 	<?php } ?> 
 	</select>
+	<label class="ft-right-text"><?php _e('Icon', 'foxtool'); ?></label>
 	</p>
 	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('Change display name and icon to your preference', 'foxtool'); ?>
 	</p>

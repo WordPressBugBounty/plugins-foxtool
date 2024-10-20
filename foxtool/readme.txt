@@ -6,7 +6,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: all-in-one, tool, functions, mail, code
 Tested up to: 6.5
 Requires PHP: 5.8
-Stable tag: 2.3.1
+Stable tag: 2.4.6
 
 Summarize the essential functions for managing a WordPress website
 

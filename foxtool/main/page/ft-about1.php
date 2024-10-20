@@ -36,10 +36,6 @@ global $foxtool_options; ?>
 	</p>
 	<p>
 	<?php
-	$count_posts = wp_count_posts();
-	$published_posts = $count_posts->publish;
-	echo 'Post: ' . esc_html($published_posts);
-	echo '<br>';
 	$user_count = count_users();
 	echo 'User: ' . esc_html($user_count['total_users']);
 	?>
