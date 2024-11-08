@@ -11,7 +11,11 @@ jQuery(document).ready(function($) {
                 "Ctrl-Z": "undo",   // hỗ trợ Ctrl + Z để quay lại
                 "Ctrl-Y": "redo",   // hỗ trợ Ctrl + Y để làm lại
                 "Cmd-Z": "undo",    // hỗ trợ Command + Z trên macOS
-                "Cmd-Y": "redo"     // hỗ trợ Command + Y trên macOS
+                "Cmd-Y": "redo",    // hỗ trợ Command + Y trên macOS
+				"Ctrl-F": "find",   // hỗ trợ Ctrl + F để tìm kiếm
+                "Cmd-F": "find",
+				"Ctrl-H": "replace", // hỗ trợ Ctrl + H để thay thế
+                "Cmd-H": "replace",
             }
         });
         $(this).data('CodeMirrorInstance', editor);

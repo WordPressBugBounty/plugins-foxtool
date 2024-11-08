@@ -1,11 +1,11 @@
 :root{
 	--ftsearch: #188889;
 	--ftsearchbg: #fff;
-	--ftsearchbor: #999;
+	--ftsearchbor: #3b3b3b;
 	--ftsearchspan:#e5e5e5;
 	--ftsearchsp:#ebebeb63;
 	--ftsearchimg:#ccc;
-	--ftsearchbl:#b5b5b5eb;
+	--ftsearchbl:#1e1e1eeb;
 	--ftsearchcolor:#333;
 }
 .ft-sbox a{

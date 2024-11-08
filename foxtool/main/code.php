@@ -29,6 +29,7 @@ function foxtool_code_options_page() {
 			if( isset($_GET['settings-updated']) ) { 
 				require_once( FOXTOOL_DIR . 'main/completed.php'); 
 			}
+			$ftnote = '<div class="ftnotecode"><span><i class="fa-regular fa-arrow-left"></i> Ctrl-Z, Cmd-Z: Undo</span><span><i class="fa-regular fa-arrow-right"></i> Ctrl-Y, Cmd-Y: Redo</span> <span><i class="fa-regular fa-magnifying-glass"></i> Ctrl-F, Cmd-F: Find</span><span><i class="fa-regular fa-filter"></i> Ctrl-H, Cmd-H: Replace</span></div>';
 			?>
 			<form method="post" action="options.php">
 			<?php settings_fields('foxtool_code_settings_group'); ?> 
@@ -37,14 +38,17 @@ function foxtool_code_options_page() {
 			<h2><?php _e('CSS', 'foxtool'); ?></h2>
 			<div class="ft-card">
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add CSS to your website', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code1]" placeholder="<?php _e('Enter CSS here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code1'])){echo esc_textarea($foxtool_code_options['code1']);} ?></textarea>
 				</p>
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add CSS for tablet size', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code11]" placeholder="<?php _e('Enter CSS here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code11'])){echo esc_textarea($foxtool_code_options['code11']);} ?></textarea>
 				</p>
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add CSS for mobile size', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code12]" placeholder="<?php _e('Enter CSS here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code12'])){echo esc_textarea($foxtool_code_options['code12']);} ?></textarea>
 				</p>
@@ -55,6 +59,7 @@ function foxtool_code_options_page() {
 			<h2><?php _e('WP HEAD', 'foxtool'); ?></h2>
 			<div class="ft-card">
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add code to WP head', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code2]" placeholder="<?php _e('Enter code here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code2'])){echo esc_textarea($foxtool_code_options['code2']);} ?></textarea>
 				</p>
@@ -65,6 +70,7 @@ function foxtool_code_options_page() {
 			<h2><?php _e('WP BODY', 'foxtool'); ?></h2>
 			<div class="ft-card">
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add code to WP body', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code3]" placeholder="<?php _e('Enter code here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code3'])){echo esc_textarea($foxtool_code_options['code3']);} ?></textarea>
 				</p>
@@ -75,6 +81,7 @@ function foxtool_code_options_page() {
 			<h2><?php _e('WP FOOTER', 'foxtool'); ?></h2>
 			<div class="ft-card">
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add code to WP footer', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code4]" placeholder="<?php _e('Enter code here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code4'])){echo esc_textarea($foxtool_code_options['code4']);} ?></textarea>
 				</p>
@@ -85,6 +92,7 @@ function foxtool_code_options_page() {
 			<h2><?php _e('WP LOGIN', 'foxtool'); ?></h2>
 			<div class="ft-card">
 			  <h3><i class="fa-regular fa-code"></i> <?php _e('Add code to WP login', 'foxtool') ?></h3>
+				<?php echo $ftnote; ?>
 				<p>
 				<textarea class="ft-code-textarea ft-dev" name="foxtool_code_settings[code5]" placeholder="<?php _e('Enter code here', 'foxtool'); ?>"><?php if(!empty($foxtool_code_options['code5'])){echo esc_textarea($foxtool_code_options['code5']);} ?></textarea>
 				</p>

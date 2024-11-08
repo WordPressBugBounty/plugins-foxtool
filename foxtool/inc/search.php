@@ -366,7 +366,7 @@ function foxtool_search_footer(){
 		</div>
 	<?php
 	$color = !empty($foxtool_search_options['main-search-c2']) ? '<style>:root{--ftsearch:'. $foxtool_search_options['main-search-c2'] .';}</style>' : NULL;
-	$dark = isset($foxtool_search_options['main-search-s1']) && $foxtool_search_options['main-search-s1'] == 'Dark' ? '<style>:root {--ftsearchbg:#121212;--ftsearchbor:#2d2d2d;--ftsearchspan:#191919;--ftsearchsp:#3f3f3f63;--ftsearchimg:#333333;--ftsearchbl:#000000f2;--ftsearchcolor:#fff;}</style>' : NULL;
+	$dark = isset($foxtool_search_options['main-search-s1']) && $foxtool_search_options['main-search-s1'] == 'Dark' ? '<style>:root {--ftsearchbg:#121212;--ftsearchbor:#2d2d2d;--ftsearchspan:#191919;--ftsearchsp:#3f3f3f63;--ftsearchimg:#333333;--ftsearchbl:#1c1c1cf2;--ftsearchcolor:#fff;}</style>' : NULL;
 	echo $color . $dark;	
 }
 add_action('wp_footer', 'foxtool_search_footer');

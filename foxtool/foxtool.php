@@ -3,7 +3,7 @@
 * Plugin name: Foxtool All-in-One: Contact chat button, Custom login, Media optimize images
 * Plugin URL: https://foxtheme.net
 * Description: Summarize the essential functions for managing a WordPress website
-* Version: 2.4.6
+* Version: 2.4.7
 * Author: Fox Theme
 * Text Domain: foxtool
 * Domain Path: /lang
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 // Them ver
-define( 'FOXTOOL_VERSION', '2.4.6');
+define( 'FOXTOOL_VERSION', '2.4.7');
 // khai bao duong dan
 define('FOXTOOL_URL', plugin_dir_url( __FILE__ ));
 define('FOXTOOL_DIR', plugin_dir_path( __FILE__ ));
@@ -45,6 +45,11 @@ function foxtool_enqueue_media_uploader() {
 	wp_enqueue_script('codemirror-foxtool', FOXTOOL_URL . 'link/codeline/codemirror.js', array(), '6.65.7');
 	wp_enqueue_script('perl-foxtool', FOXTOOL_URL . 'link/codeline/perl.js', array(), '6.65.7');
 	wp_enqueue_style('abbott-foxtool', FOXTOOL_URL . 'link/codeline/cobalt.css', array(), '6.65.7');
+	// search
+	wp_enqueue_script('search-foxtool', FOXTOOL_URL . 'link/codeline/search.js', array(), '6.65.7');
+	wp_enqueue_script('searchcursor-foxtool', FOXTOOL_URL . 'link/codeline/searchcursor.js', array(), '6.65.7');
+	wp_enqueue_script('dialog-foxtool', FOXTOOL_URL . 'link/codeline/dialog.js', array(), '6.65.7');
+	wp_enqueue_style('dialog-foxtool', FOXTOOL_URL . 'link/codeline/dialog.css', array(), '6.65.7');
 	}
 }
 add_action('admin_enqueue_scripts', 'foxtool_enqueue_media_uploader');

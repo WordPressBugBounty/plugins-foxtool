@@ -31,7 +31,7 @@ function foxtool_extend_options_page() {
 			<div class="sotab-box ftbox" id="tab1">
 			<h2><?php _e('FREE', 'foxtool'); ?></h2>
 			<div class="ft-card ft-extend-grid">
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['code']) && 1 == $foxtool_extend_options['code'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Add code', 'foxtool'); ?></span>
 						<div>
@@ -46,7 +46,7 @@ function foxtool_extend_options_page() {
 					<?php _e('This feature allows you to add CSS, JS, and HTML code to your WordPress site through hooks like WP head, WP body, WP footer, and WP login, making it easy and convenient to supplement your code', 'foxtool'); ?>
 					</div>
 				</div>
-			    <div class="ft-extend-box">
+			    <div class="ft-extend-box <?php if ( isset($foxtool_extend_options['clean']) && 1 == $foxtool_extend_options['clean'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Clean', 'foxtool'); ?></span>
 						<div>
@@ -61,7 +61,7 @@ function foxtool_extend_options_page() {
 					<?php _e('This feature helps optimize cleanup tasks such as clearing content, comments, and the media library. It makes your website cleaner and more optimized', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['font']) && 1 == $foxtool_extend_options['font'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Font', 'foxtool'); ?></span>
 						<div>
@@ -76,7 +76,7 @@ function foxtool_extend_options_page() {
 					<?php _e('Add fonts to your website with just a few simple steps. Additionally, it allows you to quickly set fonts in the specific areas you want to change, offering great convenience', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['redirect']) && 1 == $foxtool_extend_options['redirect'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Redirects', 'foxtool'); ?></span>
 						<div>
@@ -91,7 +91,7 @@ function foxtool_extend_options_page() {
 					<?php _e('This feature allows you to configure website redirects with multiple options such as 301, 404, and 503, making management much simpler', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['index']) && 1 == $foxtool_extend_options['index'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Index now', 'foxtool'); ?></span>
 						<div>
@@ -106,7 +106,7 @@ function foxtool_extend_options_page() {
 					<?php _e('Leverage Google’s Indexing API to speed up the indexing of your website on Google’s search engine. You can add as many API keys as you like for unlimited indexing capacity', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['toc']) && 1 == $foxtool_extend_options['toc'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('TOC', 'foxtool'); ?></span>
 						<div>
@@ -121,7 +121,7 @@ function foxtool_extend_options_page() {
 					<?php _e('The table of contents is an incredibly useful feature that allows readers to easily grasp the content by summarizing the headings (h-tags) in the article', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['ads']) && 1 == $foxtool_extend_options['ads'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Ads', 'foxtool'); ?></span>
 						<div>
@@ -136,37 +136,37 @@ function foxtool_extend_options_page() {
 					<?php _e('To add advertisements to your website, simply enable this feature. It provides you with various ad options to meet your distribution needs', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['notify']) && 1 == $foxtool_extend_options['notify'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Notify', 'foxtool'); ?></span>
 						<div>
 						<label class="nut-switch">
-						<input id="more10" type="checkbox" name="foxtool_extend_settings[notify]" value="1" <?php if ( isset($foxtool_extend_options['notify']) && 1 == $foxtool_extend_options['notify'] ) echo 'checked="checked"'; ?> />
+						<input id="more11" type="checkbox" name="foxtool_extend_settings[notify]" value="1" <?php if ( isset($foxtool_extend_options['notify']) && 1 == $foxtool_extend_options['notify'] ) echo 'checked="checked"'; ?> />
 						<span class="slider"></span></label>
 						</div>
 					</div>
-					<div class="ft-extend-card more10">
+					<div class="ft-extend-card more11">
 					<img src="<?php echo esc_url(FOXTOOL_URL .'img/extend/notify.png'); ?>"/>
 					<span class="ft-extend-free"><?php _e('Free', 'foxtool'); ?></span>
 					<?php _e('Support quick notification setup, allowing web managers to easily deliver useful and timely content, helping users stay informed effortlessly', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['shortcode']) && 1 == $foxtool_extend_options['shortcode'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Shortcode', 'foxtool'); ?></span>
 						<div>
 						<label class="nut-switch">
-						<input id="more10" type="checkbox" name="foxtool_extend_settings[shortcode]" value="1" <?php if ( isset($foxtool_extend_options['shortcode']) && 1 == $foxtool_extend_options['shortcode'] ) echo 'checked="checked"'; ?> />
+						<input id="more12" type="checkbox" name="foxtool_extend_settings[shortcode]" value="1" <?php if ( isset($foxtool_extend_options['shortcode']) && 1 == $foxtool_extend_options['shortcode'] ) echo 'checked="checked"'; ?> />
 						<span class="slider"></span></label>
 						</div>
 					</div>
-					<div class="ft-extend-card more10">
+					<div class="ft-extend-card more12">
 					<img src="<?php echo esc_url(FOXTOOL_URL .'img/extend/shortcode.png'); ?>"/>
 					<span class="ft-extend-free"><?php _e('Free', 'foxtool'); ?></span>
 					<?php _e('This feature compiles various shortcode templates with essential functionalities that are frequently used to enhance the user experience in WordPress', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['search']) && 1 == $foxtool_extend_options['search'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Fox Search', 'foxtool'); ?></span>
 						<div>
@@ -181,7 +181,7 @@ function foxtool_extend_options_page() {
 					<?php _e('If youre tired of WordPress default search tool because its too slow, try out our lightning-fast search feature to give your users an exceptional and speedy search experience', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['debug']) && 1 == $foxtool_extend_options['debug'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Debug', 'foxtool'); ?></span>
 						<div>
@@ -196,7 +196,7 @@ function foxtool_extend_options_page() {
 					<?php _e('If you need to monitor WordPress debug files without accessing the file manager, this tool is made just for that purpose', 'foxtool'); ?>
 					</div>
 				</div>
-				<div class="ft-extend-box">
+				<div class="ft-extend-box <?php if ( isset($foxtool_extend_options['export']) && 1 == $foxtool_extend_options['export'] ) echo 'ft-extend-sel'; ?>">
 					<div class="ft-extend-tit">
 						<span class="ft-extend-tit-span"><?php _e('Export', 'foxtool'); ?></span>
 						<div>
