@@ -3,7 +3,7 @@
 * Plugin name: Foxtool All-in-One: Contact chat button, Custom login, Media optimize images
 * Plugin URL: https://foxtheme.net
 * Description: Summarize the essential functions for managing a WordPress website
-* Version: 2.4.7
+* Version: 2.4.8
 * Author: Fox Theme
 * Text Domain: foxtool
 * Domain Path: /lang
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
 // Them ver
-define( 'FOXTOOL_VERSION', '2.4.7');
+define( 'FOXTOOL_VERSION', '2.4.8');
 // khai bao duong dan
 define('FOXTOOL_URL', plugin_dir_url( __FILE__ ));
 define('FOXTOOL_DIR', plugin_dir_path( __FILE__ ));
@@ -41,15 +41,19 @@ function foxtool_enqueue_media_uploader() {
 		wp_enqueue_editor();
     }
 	if (isset($_GET['page']) && $_GET['page'] === 'foxtool-code-options' || isset($_GET['page']) &&  $_GET['page'] === 'foxtool-ads-options') {
-	wp_enqueue_style('codemirror-foxtool', FOXTOOL_URL . 'link/codeline/codemirror.css', array(), '6.65.7');
-	wp_enqueue_script('codemirror-foxtool', FOXTOOL_URL . 'link/codeline/codemirror.js', array(), '6.65.7');
-	wp_enqueue_script('perl-foxtool', FOXTOOL_URL . 'link/codeline/perl.js', array(), '6.65.7');
-	wp_enqueue_style('abbott-foxtool', FOXTOOL_URL . 'link/codeline/cobalt.css', array(), '6.65.7');
-	// search
-	wp_enqueue_script('search-foxtool', FOXTOOL_URL . 'link/codeline/search.js', array(), '6.65.7');
-	wp_enqueue_script('searchcursor-foxtool', FOXTOOL_URL . 'link/codeline/searchcursor.js', array(), '6.65.7');
-	wp_enqueue_script('dialog-foxtool', FOXTOOL_URL . 'link/codeline/dialog.js', array(), '6.65.7');
-	wp_enqueue_style('dialog-foxtool', FOXTOOL_URL . 'link/codeline/dialog.css', array(), '6.65.7');
+		wp_enqueue_style('codemirror-foxtool', FOXTOOL_URL . 'link/codeline/codemirror.css', array(), '6.65.7');
+		wp_enqueue_script('codemirror-foxtool', FOXTOOL_URL . 'link/codeline/codemirror.js', array(), '6.65.7');
+		wp_enqueue_script('perl-foxtool', FOXTOOL_URL . 'link/codeline/perl.js', array(), '6.65.7');
+		wp_enqueue_style('abbott-foxtool', FOXTOOL_URL . 'link/codeline/cobalt.css', array(), '6.65.7');
+		// search
+		wp_enqueue_script('search-foxtool', FOXTOOL_URL . 'link/codeline/search.js', array(), '6.65.7');
+		wp_enqueue_script('searchcursor-foxtool', FOXTOOL_URL . 'link/codeline/searchcursor.js', array(), '6.65.7');
+		wp_enqueue_script('dialog-foxtool', FOXTOOL_URL . 'link/codeline/dialog.js', array(), '6.65.7');
+		wp_enqueue_style('dialog-foxtool', FOXTOOL_URL . 'link/codeline/dialog.css', array(), '6.65.7');
+	}
+	if (isset($_GET['page']) && $_GET['page'] === 'foxtool-font-options') {
+		wp_enqueue_script('select2-foxtool', FOXTOOL_URL . 'link/select2.js', array('jquery'), '4.1.0', true);
+		wp_enqueue_style('select2-foxtool', FOXTOOL_URL . 'link/select2.css', array(), '4.1.0');
 	}
 }
 add_action('admin_enqueue_scripts', 'foxtool_enqueue_media_uploader');
@@ -86,22 +90,7 @@ function foxtool_deactivation() {
     foxtool_sendFormData('Hủy kích hoạt');
 }
 register_deactivation_hook(__FILE__, 'foxtool_deactivation');
-// xoa du lieu
-function foxtool_delete_options() {
-    delete_option('foxtool_settings');
-    delete_option('foxtool_code_settings');
-    delete_option('foxtool_extend_settings');
-    delete_option('foxtool_fontset_settings');
-    delete_option('foxtool_redirects_settings');
-    delete_option('foxtool_gindex_settings');
-    delete_option('foxtool_toc_settings');
-    delete_option('foxtool_ads_settings');
-    delete_option('foxtool_notify_settings');
-    delete_option('foxtool_shortcode_settings');
-    delete_option('foxtool_search_settings');
-    delete_option('foxtool_debug_settings');
-}
-register_deactivation_hook(__FILE__, 'foxtool_delete_options');
+
 
 
 

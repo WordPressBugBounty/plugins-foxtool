@@ -111,12 +111,12 @@ function foxtool_font_options_page() {
 					echo '<div class="ft-font-sel">' . $p_contents[$i - 1] . ''; 
 						$selected = ($foxtool_fontset_options['font' . $i] ?? '') === 'Default' ? 'selected="selected"' : ''; ?>
 						<p>
-						<select name="foxtool_fontset_settings[font<?php echo $i; ?>]" class="font-select" style="width:150px;">
+						<select name="foxtool_fontset_settings[font<?php echo $i; ?>]" class="font-select select2" style="width:100%;">
 							<option value="Default" <?php echo $selected; ?>>Default</option> 
 							<?php 
 							foreach ($fontsData as $fontData) {
 								$selected = ($foxtool_fontset_options['font' . $i] ?? '') === $fontData['font_name'] ? 'selected="selected"' : ''; ?>
-								<option style="font-family:<?php echo $fontData['font_name']; ?>;" value="<?php echo $fontData['font_name']; ?>" <?php echo $selected; ?>><?php echo $fontData['font_name']; ?></option> 
+								<option value="<?php echo $fontData['font_name']; ?>" <?php echo $selected; ?>><?php echo $fontData['font_name']; ?></option> 
 							<?php } ?>
 						</select>
 						</p>
@@ -189,6 +189,12 @@ function foxtool_font_options_page() {
 				$('#' + divId).css('font-family', selectedFont);
 				$('#' + divId).show(); 
 			}
+		});
+	});
+	// select font
+	jQuery(document).ready(function($) {
+		$('.select2').select2({
+			width: 'resolve'  
 		});
 	});
 	</script>

@@ -47,6 +47,9 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 	background: #4caf50;
 	position: relative;
 	overflow: hidden;
+	display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .ft-chatbox #chatona svg{
 	width:33px !important;
@@ -58,12 +61,6 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
   transform: translateX(100%);
 }
 
-.svg-exit {
-  transform: translateX(-100%);
-}
-.svg-enter-active, .svg-exit-active {
-  transform: translateX(0);
-}
 .ft-chatbox #chatona svg path{
 	fill:#fff !important;
 }
@@ -113,6 +110,11 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 	max-height: 300px;
 	overflow: auto;
 	padding:0px 10px;
+}
+.ft-chaton-scroll a i {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .ft-chaton::after {
     content: '';
@@ -414,7 +416,7 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 	text-align: center;
 	background: #fffffff5;
     border-radius: 10px;
-    padding: 10px 5px 12px 5px;
+    padding: 10px 5px 17px 5px;
     box-sizing: content-box;
     box-shadow: 0px 0px 5px #0003;
 }

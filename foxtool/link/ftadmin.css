@@ -1194,14 +1194,6 @@ article.ft-box-font {
 .font-view{
 	font-size:20px;
 }
-.ft-font-box {
-    max-height: 500px;
-    overflow-x: auto;
-    padding: 10px;
-    border: 1px dashed #ccc;
-    box-sizing: border-box;
-    border-radius: 7px;
-}
 .ft-font-sel:first-child{
 	margin-top:0px;
 }
