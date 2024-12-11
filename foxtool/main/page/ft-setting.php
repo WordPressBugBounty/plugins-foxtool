@@ -53,14 +53,23 @@ global $foxtool_options; ?>
 	<p class="ft-note ft-note-red"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('You can hide Foxtool from the WP menu, but you can still access it through the link. This will hide Foxtool for all accounts', 'foxtool'); ?><br>
 	<b><?php echo admin_url('/admin.php?page=foxtool-options');?></b>
 	</p>
+  <h3><i class="fa-regular fa-eye-slash"></i> <?php _e('Hide plugins from the manager', 'foxtool') ?></h3>	
 	<!-- tool hiden 2 -->
-	<p>
-	<label class="nut-switch">
-	<input type="checkbox" name="foxtool_settings[foxtool4]" value="1" <?php if ( isset($foxtool_options['foxtool4']) && 1 == $foxtool_options['foxtool4'] ) echo 'checked="checked"'; ?> />
-	<span class="slider"></span></label>
-	<label class="ft-label-right"><?php _e('Hide Foxtool in the plugin manager', 'foxtool'); ?></label>
-	</p>
-	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('This feature will hide Foxtool from the plugin management page', 'foxtool'); ?>
+	<?php
+	$all_plugins = get_plugins(); 
+	$p = 0;
+	foreach ($all_plugins as $plugin_path => $plugin_info) {
+		$p++;
+		?>
+		<p>
+			<label class="nut-switch">
+				<input type="checkbox" name="foxtool_settings[foxtool-pu<?php echo $p; ?>]" value="1" <?php if ( isset($foxtool_options['foxtool-pu'. $p]) && 1 == $foxtool_options['foxtool-pu'. $p] ) echo 'checked="checked"'; ?> />
+				<span class="slider"></span>
+			</label>
+			<label class="ft-label-right"><?php echo esc_html($plugin_info['Name']); ?></label>
+		</p>
+	<?php } ?>
+	<p class="ft-note"><i class="fa-regular fa-lightbulb-on"></i> <?php _e('This feature will hide the plugin you want from the plugin management page', 'foxtool'); ?>
 	</p>
   <h3><i class="fa-regular fa-language"></i> <?php _e('Display language settings', 'foxtool') ?></h3>	
 	<p>

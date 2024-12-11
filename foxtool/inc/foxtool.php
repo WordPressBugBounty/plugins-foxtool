@@ -2,16 +2,16 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 global $foxtool_options;
 # an admin khoi ho so
-if (isset($foxtool_options['foxtool1']) && !empty($foxtool_options['foxtool11'])){
 function foxtool_pre_user_hiquery($user_query){
 	global $foxtool_options;
-	$id = !empty($foxtool_options['foxtool11']) ? intval($foxtool_options['foxtool11']) : NULL;
-    if (is_admin() && current_user_can('manage_options')){
-        $user_query->query_where .= " AND {$GLOBALS['wpdb']->users}.ID != {$id}";
-    }
+	if (isset($foxtool_options['foxtool1']) && !empty($foxtool_options['foxtool11'])){
+		$id = !empty($foxtool_options['foxtool11']) ? intval($foxtool_options['foxtool11']) : NULL;
+		if (is_admin() && current_user_can('manage_options')){
+			$user_query->query_where .= " AND {$GLOBALS['wpdb']->users}.ID != {$id}";
+		}
+	}
 }
 add_action('pre_user_query', 'foxtool_pre_user_hiquery');
-}
 function foxtool_get_admin_users() {
     if (function_exists('foxtool_pre_user_hiquery')) {
         remove_action('pre_user_query', 'foxtool_pre_user_hiquery');
@@ -32,18 +32,28 @@ function foxtool_hide_menuadmin(){
 add_action( 'admin_menu', 'foxtool_hide_menuadmin', 999);
 } 
 # Ẩn plugin khoi quan ly plugin
-if (isset($foxtool_options['foxtool4'])){
-function foxtool_hide_plugins($plugins){
-    $hidden_plugins = ['foxtool/foxtool.php'];
-    foreach ($hidden_plugins as $plugin) {
-        if (array_key_exists($plugin, $plugins)) {
-            unset($plugins[$plugin]);
+function foxtool_hide_plugins($plugins) {
+    global $foxtool_options;
+    $all_plugins = get_plugins(); 
+    if (is_array($foxtool_options) || is_object($foxtool_options)) {
+        foreach ($foxtool_options as $key => $value) {
+            if (preg_match('/^foxtool-pu(\d+)$/', $key, $matches)) {
+                $n = $matches[1]; 
+                if ($value == 1) {
+                    $plugin_keys = array_keys($all_plugins);
+                    if (isset($plugin_keys[$n - 1])) { 
+                        $plugin_to_hide = $plugin_keys[$n - 1]; 
+                        if (isset($plugins[$plugin_to_hide])) {
+                            unset($plugins[$plugin_to_hide]); 
+                        }
+                    }
+                }
+            }
         }
     }
     return $plugins;
 }
 add_filter('all_plugins', 'foxtool_hide_plugins');
-}
 # xem csdl dung gi
 function foxtool_display_db_info() {
     global $wpdb;
