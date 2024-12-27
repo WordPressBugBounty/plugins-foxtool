@@ -53,7 +53,7 @@ global $foxtool_options; ?>
 	</div>
   <h3><i class="fa-regular fa-star"></i> <?php _e('Plugin development', 'foxtool') ?></h3>
 	<div class="ft-card-note"> 
-	<p><?php _e('Developed by:', 'foxtool') ?> <b><a target="_blank" href="https://foxplugin.com">Fox Plugin</a></b></p>
+	<p><?php _e('Developed by:', 'foxtool') ?> <b><a target="_blank" href="https://foxtheme.net">Fox Theme</a></b></p>
 	<p><?php _e('Author:', 'foxtool') ?> <b><a target="_blank" href="https://www.facebook.com/adfoxtheme">IHOAN (NGUYEN NGOC HOAN)</a></b></p>
 	<p><?php _e('Contributions:', 'foxtool') ?> <b>Vu Ngoc Tuan, AR T RU, Linh Tran, Di Hu Hoa Tung, Minh Nhut</b></p>
 	</div>

@@ -45,11 +45,6 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
     box-sizing: border-box;
     line-height: 0;
 	background: #4caf50;
-	position: relative;
-	overflow: hidden;
-	display: flex;
-    justify-content: center;
-    align-items: center;
 }
 .ft-chatbox #chatona svg{
 	width:33px !important;
@@ -67,6 +62,9 @@ body .ft-chaton a, body .ft-chatbox-skin1 a, body .ft-chatbox-skin2 a, body .ft-
 .ft-chatbox #chatona .khacus{
 	width:45px !important;
 	height:45px !important;
+}
+.ft-chatbox #chatona .original-icon {
+    display: none; 
 }
 @keyframes logo {
   100% { box-shadow:0 0 0 20px rgba(0,210,255,0); }

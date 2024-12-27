@@ -12,7 +12,7 @@ function foxtool_gindex_options_page() {
 	  <div class="ft-box">
 		<div class="ft-menu">
 			<div class="ft-logo ft-logoquay">
-			<a class="ft-logoquaya" href="https://foxplugin.com" target="_blank">
+			<a class="ft-logoquaya" href="https://foxtheme.net" target="_blank">
 			<span><?php foxtool_logo(); ?></span>
 			</a>
 			</div>
