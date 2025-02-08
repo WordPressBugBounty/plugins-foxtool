@@ -3,93 +3,139 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 global $foxtool_options;
 # Code tự động lưu ảnh vào lưu trữ của bạn
 class foxtool_save_images_hots {
-        function __construct() {
-            add_filter('content_save_pre', array($this, 'foxtool_post_save_images'));
-        }
-        function foxtool_post_save_images($content) {
-            global $post, $foxtool_options;
-            if ($post && isset($post->ID)) {
-                $post_id = $post->ID;
-                $post_status = get_post_status($post_id);
-                if ($post_status == 'publish' || $post_status == 'draft' || $post_status == 'pending') {
-                    set_time_limit(240);
-                    $preg = preg_match_all('/<img.*?src="(.*?)"/', stripslashes($content), $matches);
-                    if ($preg) {
-                        foreach ($matches[1] as $image_url) {
-                            if (empty($image_url)) continue;
-                            $pos = strpos($image_url, $_SERVER['HTTP_HOST']);
-                            if ($pos === false) {
-                                $res = $this->foxtool_fill_save_images($image_url, $post_id);
-								if ($res !== null) {
-									$url = wp_get_attachment_url($res); 
-									$content = str_replace($image_url, $url, $content);
-								}
-								if (isset($foxtool_options['post-up11']) && !empty($content)) {
-									$content = wp_kses_post($content);
-									$dom = new DOMDocument();
-									libxml_use_internal_errors(true);
-									$dom->loadHTML('<?xml encoding="UTF-8">' . $content);
-									$imgs = $dom->getElementsByTagName('img');
-									foreach ($imgs as $img) {
-										$class = $img->getAttribute('class');
-										if (strpos(strtolower($class), 'lazy') !== false) {
-											$src = $img->getAttribute('data-src');
-											$img->setAttribute('src', $src);
-										} else {
-											$src = $img->getAttribute('src');
-										}
-										$newImg = $dom->createElement('img');
-										$newImg->setAttribute('src', $src);
-										$img->parentNode->replaceChild($newImg, $img);
-									}
-									$result = $dom->saveHTML($dom->getElementsByTagName('body')->item(0));
-									libxml_clear_errors();
-									$content = $result;
-								}
-                            }
-                        }
-                    }
-                }
-            }
-            remove_filter('content_save_pre', array($this, 'foxtool_post_save_images'));
-            return $content;
-        }
-        function foxtool_fill_save_images($image_url, $post_id) {
-			$file = file_get_contents($image_url);
-			$post = get_post($post_id);
-			if ($post) {
-				$posttitle = $post->post_title;
-				$postname = sanitize_title($posttitle);
-				$url_parts = parse_url($image_url);
-				$image_path = pathinfo($url_parts['path']);
-				$file_extension = $image_path['extension'];
-				// Thêm 4 ký tự ngẫu nhiên vào cuối post ID
-				$random_suffix = wp_generate_password(4, false);
-				$im_name = "$postname-$random_suffix.$file_extension";
-				$res = wp_upload_bits($im_name, '', $file);
-				$attach_id = $this->foxtool_insert_attachment($res['file'], $post_id);
-				return $attach_id;
-			}
-			// Xử lý khi không có giá trị $post
-			return null;
-		}
-        function foxtool_insert_attachment($file, $id) {
-            $dirs = wp_upload_dir();
-            $filetype = wp_check_filetype($file);
-            $attachment = array(
-                'guid' => $dirs['baseurl'] . '/' . _wp_relative_upload_path($file),
-                'post_mime_type' => $filetype['type'],
-                'post_title' => preg_replace('/\.[^.]+$/', '', basename($file)),
-                'post_content' => '',
-                'post_status' => 'inherit'
-            );
-            $attach_id = wp_insert_attachment($attachment, $file, $id);
-            $attach_data = wp_generate_attachment_metadata($attach_id, $file);
-            wp_update_attachment_metadata($attach_id, $attach_data);
-            return $attach_id;
-        }
+    function __construct() {
+        add_filter('content_save_pre', array($this, 'foxtool_post_save_images'));
     }
-	isset($foxtool_options['post-up1']) && new foxtool_save_images_hots();
+    function foxtool_get_curl_image_data($url) {
+		$ch = curl_init();
+		curl_setopt_array($ch, [
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HEADER => false,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+			CURLOPT_TIMEOUT => 1800  // Giới hạn thời gian tối đa là 1800 giây (30 phút)
+		]);
+		$data = curl_exec($ch);
+		$type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+		curl_close($ch);
+		
+		// Kiểm tra nếu dữ liệu hợp lệ và là hình ảnh
+		if ($data && strpos($type, 'image/') === 0) {
+			// Sử dụng getimagesizefromstring để kiểm tra xem dữ liệu có phải là ảnh không
+			$image_info = getimagesizefromstring($data);
+			if ($image_info === false) {
+				return false;  // Dữ liệu không phải là hình ảnh hợp lệ
+			}
+			
+			// Kiểm tra nếu là ảnh PNG
+			if ($image_info[2] == IMAGETYPE_PNG) {
+				// Kiểm tra sự tồn tại của hàm foxtool_png_8bit_to_32bit
+				if (function_exists('foxtool_png_8bit_to_32bit')) {
+					// Tạo ảnh tạm để xử lý
+					$temp_file = tempnam(sys_get_temp_dir(), 'foxtool_image');
+					file_put_contents($temp_file, $data);
+
+					// Thực hiện chuyển đổi ảnh nếu cần
+					$file_info = ['tmp_name' => $temp_file, 'type' => $type];
+					$file_info = foxtool_png_8bit_to_32bit($file_info); 
+
+					// Đọc lại dữ liệu ảnh đã chuyển đổi
+					$image_data = file_get_contents($file_info['tmp_name']);
+					
+					// Xóa ảnh tạm sau khi sử dụng
+					unlink($file_info['tmp_name']); 
+
+					// Trả về dữ liệu ảnh đã chuyển đổi
+					return $image_data;
+				}
+			}
+			
+			// Nếu không phải ảnh PNG hoặc không cần chuyển đổi, trả về dữ liệu gốc
+			return $data;
+		}
+
+		// Nếu không phải hình ảnh hợp lệ, trả về false
+		return false;
+	}
+    function foxtool_post_save_images($content) {
+		global $post, $foxtool_options;
+		if (!$post || !isset($post->ID)) return $content;
+		$post_id = $post->ID;
+		$post_status = get_post_status($post_id);
+		if (!in_array($post_status, ['publish', 'draft', 'pending'])) return $content;
+		set_time_limit(240);
+		$preg = preg_match_all('/<img.*?src="(.*?)"/', stripslashes($content), $matches);
+		if (!$preg) return $content;
+		foreach ($matches[1] as $image_url) {
+			if (empty($image_url)) continue;
+			if (strpos($image_url, $_SERVER['HTTP_HOST']) !== false) continue;
+			// Luôn dùng cURL để tải ảnh
+			$image_data = $this->foxtool_get_curl_image_data($image_url);
+			if ($image_data) {
+				$res = $this->foxtool_save_image_data($image_data, $post_id, $image_url);
+				if ($res) {
+					$url = wp_get_attachment_url($res);
+					$content = str_replace($image_url, $url, $content);
+				}
+			}
+		}
+		if (isset($foxtool_options['post-up11']) && !empty($content)) {
+			$content = wp_kses_post($content);
+			$dom = new DOMDocument();
+			libxml_use_internal_errors(true);
+			$dom->loadHTML('<?xml encoding="UTF-8">' . $content);
+			$imgs = $dom->getElementsByTagName('img');
+			foreach ($imgs as $img) {
+				$class = $img->getAttribute('class');
+				if (strpos(strtolower($class), 'lazy') !== false) {
+					$src = $img->getAttribute('data-src');
+					$img->setAttribute('src', $src);
+				} else {
+					$src = $img->getAttribute('src');
+				}
+				$img->setAttribute('alt', get_the_title());
+				$newImg = $dom->createElement('img');
+				$newImg->setAttribute('src', $src);
+				$newImg->setAttribute('alt', get_the_title());  
+				$img->parentNode->replaceChild($newImg, $img);
+			}
+			$result = $dom->saveHTML($dom->getElementsByTagName('body')->item(0));
+			libxml_clear_errors();
+			$content = $result;
+		}
+		remove_filter('content_save_pre', array($this, 'foxtool_post_save_images'));
+		return $content;
+	}
+    function foxtool_save_image_data($image_data, $post_id, $original_url) {
+		$post = get_post($post_id);
+		if (!$post) return null;
+		$url_parts = parse_url($original_url);
+		$ext = pathinfo($url_parts['path'], PATHINFO_EXTENSION) ?: 'jpg';
+		$upload_dir = wp_upload_dir(); 
+		$filename = sanitize_title($post->post_title) . '.' . $ext; // Tên file không có phần ngẫu nhiên
+		$unique_filename = wp_unique_filename($upload_dir['path'], $filename); // Kiểm tra và tạo tên file duy nhất
+		$res = wp_upload_bits($unique_filename, '', $image_data);
+		return $res['error'] ? null : $this->foxtool_insert_attachment($res['file'], $post_id);
+	}
+    function foxtool_insert_attachment($file, $id) {
+        $dirs = wp_upload_dir();
+        $filetype = wp_check_filetype($file);
+        $attachment = array(
+            'guid' => $dirs['baseurl'] . '/' . _wp_relative_upload_path($file),
+            'post_mime_type' => $filetype['type'],
+            'post_title' => preg_replace('/\.[^.]+$/', '', basename($file)),
+            'post_content' => '',
+            'post_status' => 'inherit'
+        );
+        $attach_id = wp_insert_attachment($attachment, $file, $id);
+        $attach_data = wp_generate_attachment_metadata($attach_id, $file);
+        wp_update_attachment_metadata($attach_id, $attach_data);
+        return $attach_id;
+    }
+}
+isset($foxtool_options['post-up1']) && new foxtool_save_images_hots();
 # Xóa bài viết sẽ xóa luôn hình ảnh đính kèm trong post story land
 if(isset($foxtool_options['post-del1'])){
 function fox_delete_all_attached_media( $post_id ) {
