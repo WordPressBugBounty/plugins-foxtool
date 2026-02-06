@@ -4,9 +4,9 @@ Donate link: https://paypal.me/ihoan
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: all-in-one, tool, functions, mail, code
-Tested up to: 6.8.2
+Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 2.5.2
+Stable tag: 2.5.3
 
 Summarize the essential functions for managing a WordPress website
 
@@ -53,6 +53,10 @@ You'll find answers to many of your questions on (https://foxtheme.com).
 == Screenshots ==
 
 == Changelog ==
+
+= 2.5.3 =
+* Fix security issue in Google OAuth login flow by adding nonce-based CSRF protection
+* General security hardening and compatibility updates
 
 = 1.0.0 =
 * First release

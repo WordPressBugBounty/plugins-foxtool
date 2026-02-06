@@ -20,6 +20,8 @@ function foxtool_initialize_google_client() {
 // Hàm trả về URL đăng nhập
 function foxtool_get_google_login_url() {
     $gClient = foxtool_initialize_google_client();
+    $state = wp_create_nonce('foxtool_login_google');
+    $gClient->setState($state);
     $login_url = $gClient->createAuthUrl();
     return $login_url;
 }
@@ -58,6 +60,9 @@ add_shortcode('google-login', 'foxtool_login_shortcode_google');
 # cau hinh nhan thong tin
 function foxtool_login_google() {
     global $foxtool_options;
+	if ( empty($_GET['state']) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['state'] ) ), 'foxtool_login_google' ) ) {
+		wp_die( __( 'Security check failed. Please try again.', 'foxtool' ) );
+	}
 	$gClient = foxtool_initialize_google_client();
 	if (isset($_GET['code'])) {
         $token = $gClient->fetchAccessTokenWithAuthCode($_GET['code']);
