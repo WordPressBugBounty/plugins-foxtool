@@ -257,6 +257,9 @@ add_action('wp_ajax_foxtool_clear_debug_log', 'foxtool_clear_debug_log');
 // load debug
 function foxtool_get_debug_log_callback() {
     check_ajax_referer('foxtool_nonce_getdebug', 'security');
+    if (!current_user_can('manage_options')){
+        wp_die(__('Insufficient permissions', 'foxtool'));
+    }
     $debug_log_path = WP_CONTENT_DIR . '/debug.log';
     // Kiểm tra xem tệp tồn tại không trước khi đọc nó
     if (file_exists($debug_log_path)) {

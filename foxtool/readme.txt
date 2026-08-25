@@ -6,7 +6,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: all-in-one, tool, functions, mail, code
 Tested up to: 6.9
 Requires PHP: 7.2
-Stable tag: 2.5.3
+Stable tag: 2.5.4
 
 Summarize the essential functions for managing a WordPress website
 
@@ -53,6 +53,9 @@ You'll find answers to many of your questions on (https://foxtheme.com).
 == Screenshots ==
 
 == Changelog ==
+
+= 2.5.4 =
+* Fix authorization for media quick toggles by requiring manage_options, restricting accepted option keys, and limiting nonce output to authorized administrators.
 
 = 2.5.3 =
 * Fix security issue in Google OAuth login flow by adding nonce-based CSRF protection

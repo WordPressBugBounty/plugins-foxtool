@@ -85,11 +85,20 @@ function foxtool_index_now($urls, $action) {
 }
 // Xử lý ajax index now and del index
 function foxtool_index_now_callback() {
-    if (!wp_verify_nonce($_POST['ajax_nonce'], 'foxtool_index_now_nonce')) {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('Insufficient permissions', 'foxtool'));
+    }
+    if (!isset($_POST['ajax_nonce']) || !is_scalar($_POST['ajax_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ajax_nonce'])), 'foxtool_index_now_nonce')) {
         wp_die('Invalid nonce');
     }
-    $urls = explode("\n", $_POST['url']); 
-    $action = $_POST['ajax_action'];
+    if (!isset($_POST['url'], $_POST['ajax_action']) || !is_scalar($_POST['url']) || !is_scalar($_POST['ajax_action'])) {
+        wp_die('Missing parameters');
+    }
+    $urls = explode("\n", sanitize_textarea_field(wp_unslash($_POST['url']))); 
+    $action = sanitize_key(wp_unslash($_POST['ajax_action']));
+    if (!in_array($action, array('update', 'delete'), true)) {
+        wp_die('Invalid action');
+    }
     // Chia nhỏ mảng URL thành các phần có tối đa 200 URL mỗi phần
     $chunks = array_chunk($urls, 200);
     // Duyệt qua từng phần và xử lý
@@ -196,10 +205,16 @@ function foxtool_index_status($urls) {
 }
 // ajax index status
 function foxtool_index_status_callback() {
-    if (!wp_verify_nonce($_POST['ajax_nonce'], 'foxtool_index_status_nonce')) {
+    if (!current_user_can('manage_options')) {
+        wp_die(__('Insufficient permissions', 'foxtool'));
+    }
+    if (!isset($_POST['ajax_nonce']) || !is_scalar($_POST['ajax_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ajax_nonce'])), 'foxtool_index_status_nonce')) {
         wp_die('Invalid nonce');
     }
-    $urls = explode("\n", $_POST['url']); 
+    if (!isset($_POST['url']) || !is_scalar($_POST['url'])) {
+        wp_die('Missing parameters');
+    }
+    $urls = explode("\n", sanitize_textarea_field(wp_unslash($_POST['url']))); 
     // Chia nhỏ mảng URL thành các phần có tối đa 200 URL mỗi phần
     $chunks = array_chunk($urls, 200);
     // Duyệt qua từng phần và xử lý
@@ -253,6 +268,9 @@ function foxtool_index_use_count() {
 // tao nut index
 function foxtool_quick_index_button($actions, $post) {
 	global $foxtool_gindex_options;
+    if (!current_user_can('manage_options')) {
+        return $actions;
+    }
 	if (isset($foxtool_gindex_options['posttype']) && in_array($post->post_type, $foxtool_gindex_options['posttype'])) {
 		if ($post->post_status == 'publish') {
 			$actions['index'] = sprintf(
@@ -275,11 +293,14 @@ if(isset($foxtool_gindex_options['posttype'])){
 }
 // index ajax o edit
 function foxtool_index_post_ajax() {
-    if (!wp_verify_nonce($_POST['nonce'], 'foxtool_index_now_nonce')) {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(__('Insufficient permissions', 'foxtool'));
+    }
+    if (!isset($_POST['nonce']) || !is_scalar($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'foxtool_index_now_nonce')) {
         wp_send_json_error('Invalid nonce');
     }
-    $post_id = intval($_POST['post_id']);
-    $url = esc_url($_POST['url']);
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $url = isset($_POST['url']) && is_scalar($_POST['url']) ? esc_url_raw(wp_unslash($_POST['url'])) : '';
     if (!$url || !$post_id) {
         wp_send_json_error('Invalid URL or Post ID');
     }
@@ -293,6 +314,9 @@ function foxtool_index_post_ajax() {
 add_action('wp_ajax_foxtool_index_post', 'foxtool_index_post_ajax');
 // js xu ly index
 function foxtool_enqueue_scripts() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
     wp_enqueue_script('jquery');
     ?>
     <script type="text/javascript">

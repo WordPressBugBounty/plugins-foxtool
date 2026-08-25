@@ -852,13 +852,34 @@ function foxtool_watermark_checkbox_adminbar($wp_admin_bar) {
 }
 add_action('admin_bar_menu', 'foxtool_watermark_checkbox_adminbar', 100);
 function foxtool_handletoggle_watermark() {
-    if ( !isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'foxtool_watermark_nonce') ) {
+    if ( !current_user_can('manage_options') ) {
+        wp_send_json_error('Forbidden');
+    }
+    if ( !isset($_POST['nonce']) || !is_scalar($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'foxtool_watermark_nonce') ) {
         wp_send_json_error('Invalid nonce');
     }
-    if ( isset($_POST['enabled'], $_POST['option_key']) ) {
-        $enabled = sanitize_text_field($_POST['enabled']);
-        $option_key = sanitize_text_field($_POST['option_key']);
+    if ( isset($_POST['enabled'], $_POST['option_key']) && is_scalar($_POST['enabled']) && is_scalar($_POST['option_key']) ) {
+        $enabled = sanitize_text_field(wp_unslash($_POST['enabled']));
+        $option_key = sanitize_key(wp_unslash($_POST['option_key']));
+        $allowed_option_keys = array(
+            'media-zip1',
+            'media-webp1',
+            'media-avif1',
+            'media-avif2',
+            'media-zip2',
+            'media-logo1',
+            'media-cutop1',
+        );
+        if ( !in_array($option_key, $allowed_option_keys, true) ) {
+            wp_send_json_error('Invalid option');
+        }
+        if ( !in_array($enabled, array('true', 'false'), true) ) {
+            wp_send_json_error('Invalid value');
+        }
         $foxtool_options = get_option('foxtool_settings', array());
+        if ( !is_array($foxtool_options) ) {
+            $foxtool_options = array();
+        }
         $foxtool_options[$option_key] = $enabled === 'true' ? 1 : NULL;
         update_option('foxtool_settings', $foxtool_options);
         wp_send_json_success('Option updated');
@@ -866,7 +887,11 @@ function foxtool_handletoggle_watermark() {
     wp_send_json_error('Missing parameters');
 }
 add_action('wp_ajax_toggle_watermark', 'foxtool_handletoggle_watermark');
-function foxtool_watermark_admin_footer() { ?>
+function foxtool_watermark_admin_footer() {
+    if ( !is_admin() || !current_user_can('manage_options') ) {
+        return;
+    }
+    ?>
     <script type="text/javascript">
     jQuery(document).ready(function($) {
         $('#wp-admin-bar-foxtool-adw input[type="checkbox"]').on('change', function() {
@@ -899,23 +924,23 @@ function foxtool_watermark_admin_footer() { ?>
                     return; // Không xác định được checkbox, thoát
             }
             $.ajax({
-                url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
                 type: 'POST',
                 data: {
                     action: 'toggle_watermark',
-                    nonce: '<?php echo wp_create_nonce('foxtool_watermark_nonce'); ?>',
+                    nonce: '<?php echo esc_js(wp_create_nonce('foxtool_watermark_nonce')); ?>',
                     enabled: isChecked ? 'true' : 'false',
                     option_key: optionKey
                 },
                 success: function(response) {
                     if (response.success) {
-                        alert('<?php _e('Settings changed', 'foxtool'); ?>');
+                        alert('<?php echo esc_js(__('Settings changed', 'foxtool')); ?>');
                     } else {
-                        alert('<?php _e('Failed to update setting:', 'foxtool'); ?> ' + response.data);
+                        alert('<?php echo esc_js(__('Failed to update setting:', 'foxtool')); ?> ' + response.data);
                     }
                 },
                 error: function() {
-                    alert('<?php _e('An error occurred', 'foxtool'); ?>');
+                    alert('<?php echo esc_js(__('An error occurred', 'foxtool')); ?>');
                 }
             });
         });
